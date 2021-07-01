@@ -2,10 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
     android:layout_margin="1dp"
     android:padding="2dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="#fff"
+    app:cardBackgroundColor="#000"
     app:cardCornerRadius="4dp"
     android:layout_height="wrap_content">
     <RelativeLayout
@@ -19,13 +20,14 @@
             android:layout_centerHorizontal="true"
             android:src="@mipmap/ic_launcher"
             android:scaleType="centerCrop"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:layout_below="@+id/imageView"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tvName"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Name"-->
+<!--            android:textSize="10dp"-->
+<!--            android:layout_below="@+id/imageView"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:id="@+id/tvName"/>-->
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
