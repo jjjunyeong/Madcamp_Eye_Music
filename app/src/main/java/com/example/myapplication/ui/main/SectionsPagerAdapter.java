@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.main;
 
 import android.content.Context;
+import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;

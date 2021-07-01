@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,12 +40,19 @@ public class MainActivity extends AppCompatActivity {
 
         readExcel(names,numbers);
 
-        for(int i=0; i<names.size();i++){
-            StringBuffer sb1 = new StringBuffer();
-            sb1.append(names.get(i));
-            sb1.append(numbers.get(i));
-            Toast.makeText(this,sb1,Toast.LENGTH_SHORT).show();
-        }
+//        Intent intent = new Intent(MainActivity.this, Fragment1.class);
+//        PhoneNumber phoneNumber = new PhoneNumber(names,numbers);
+//        intent.putExtra("DATA",phoneNumber);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("DATA",phoneNumber);
+
+
+//        for(int i=0; i<names.size();i++){
+//            StringBuffer sb1 = new StringBuffer();
+//            sb1.append(names.get(i));
+//            sb1.append(numbers.get(i));
+//            Toast.makeText(this,sb1,Toast.LENGTH_SHORT).show();
+//        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -56,13 +64,9 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = binding.fab;
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Fragment1.nameinFrag = names;
+        Fragment1.numberinFrag = numbers;
+
     }
 
     public void readExcel(List names, List numbers){
