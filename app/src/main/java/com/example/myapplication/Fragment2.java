@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.myapplication.ui.main.ClickedItemActivity;
+import com.example.myapplication.ClickedItemActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,18 +44,22 @@ public class Fragment2 extends Fragment {
         CustomAdapter customAdapter = new CustomAdapter(names,images,this);
         gridView.setAdapter(customAdapter);
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedName = names[i];
+                int selectedImage = images[i];
+                Toast.makeText(getActivity(), names[i], Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ClickedItemActivity.class);
+                intent.putExtra("name",selectedName);
+                intent.putExtra("image",selectedImage);
+                //Toast.makeText(getActivity(), "clicked", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+                //((StartActivity_Interface)parentActivity).startMyIntent(intent);
+            }
+        });
+
         return rootView;
-
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                String selectedName = names[i];
-//                int selectedImage = images[i];
-//
-//                startActivity(new Intent(MainActivity.this, ClickedItemActivity.class).putExtra("name",selectedName).putExtra("image",selectedImage));
-//            }
-//        });
-
     }
 
     public class CustomAdapter extends BaseAdapter{

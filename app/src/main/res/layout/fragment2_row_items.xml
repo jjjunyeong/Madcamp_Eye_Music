@@ -18,7 +18,7 @@
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:src="@mipmap/ic_launcher"
-            android:scaleType="fitXY"/>
+            android:scaleType="centerCrop"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

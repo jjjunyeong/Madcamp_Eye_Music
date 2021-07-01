@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.main;
+package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.R;
-
-public class ClickedItemActivity extends AppCompatActivity {
-
+public class ClickedItemActivity extends AppCompatActivity  {
     ImageView imageView;
     TextView textView;
 
@@ -22,7 +19,6 @@ public class ClickedItemActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.tvName);
 
-
         Intent intent = getIntent();
 
         if(intent.getExtras() != null){
@@ -32,5 +28,6 @@ public class ClickedItemActivity extends AppCompatActivity {
             textView.setText(selectedName);
             imageView.setImageResource(selectedImage);
         }
+
     }
 }

@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="#EDEBEB"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     tools:context=".MainActivity">
 
     <GridView

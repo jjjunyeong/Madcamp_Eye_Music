@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.myapplication.ui.main.ClickedItemActivity;
+import com.example.myapplication.ClickedItemActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment1.nameinFrag = names;
         Fragment1.numberinFrag = numbers;
-
-
-
     }
 
     public void readExcel(List names, List numbers){
