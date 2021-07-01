@@ -32,6 +32,5 @@ public class ClickedItemActivity extends AppCompatActivity {
             textView.setText(selectedName);
             imageView.setImageResource(selectedImage);
         }
-
     }
 }
