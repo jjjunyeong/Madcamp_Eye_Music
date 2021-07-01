@@ -10,5 +10,5 @@
         android:layout_height="wrap_content"
         android:text="Calls"
         android:layout_gravity="center"
-        android:textSize="30sp"></TextView>
+        android:textSize="30sp"/>
 </LinearLayout>

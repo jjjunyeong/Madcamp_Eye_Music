@@ -4,33 +4,43 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.myapplication.ui.main.ClickedItemActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.myapplication.ui.main.SectionsPagerAdapter;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import jxl.Image;
 import jxl.Sheet;
 import jxl.Workbook;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
     List names = new ArrayList();
     List numbers = new ArrayList();
 
@@ -38,21 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        readExcel(names,numbers);
-
-//        Intent intent = new Intent(MainActivity.this, Fragment1.class);
-//        PhoneNumber phoneNumber = new PhoneNumber(names,numbers);
-//        intent.putExtra("DATA",phoneNumber);
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("DATA",phoneNumber);
-
-
-//        for(int i=0; i<names.size();i++){
-//            StringBuffer sb1 = new StringBuffer();
-//            sb1.append(names.get(i));
-//            sb1.append(numbers.get(i));
-//            Toast.makeText(this,sb1,Toast.LENGTH_SHORT).show();
-//        }
+        readExcel(names, numbers);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -62,10 +58,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = binding.fab;
 
         Fragment1.nameinFrag = names;
         Fragment1.numberinFrag = numbers;
+
+
 
     }
 
@@ -104,4 +101,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 }
