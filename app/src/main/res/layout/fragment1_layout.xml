@@ -13,17 +13,27 @@
             android:layout_width="315dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"/>
-        <Button
-            android:id="@+id/search_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="right"/>
+
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="720dp">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp">
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/search_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/add_image"/>
 
 </LinearLayout>
