@@ -14,11 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.myapplication.ui.main.SectionsPagerAdapter;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -27,11 +30,21 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    List names = new ArrayList();
+    List numbers = new ArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        readExcel();
+        readExcel(names,numbers);
+
+        for(int i=0; i<names.size();i++){
+            StringBuffer sb1 = new StringBuffer();
+            sb1.append(names.get(i));
+            sb1.append(numbers.get(i));
+            Toast.makeText(this,sb1,Toast.LENGTH_SHORT).show();
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -52,13 +65,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void readExcel(){
-        Log.v("Main","시작");
+    public void readExcel(List names, List numbers){
         try{
             InputStream is = getBaseContext().getResources().getAssets().open("NAVER_Contact.xls", Context.MODE_PRIVATE);
 
             Workbook wb = Workbook.getWorkbook(is);
-            Log.v("Main","시작");
             if(wb !=null){
                 Sheet sheet = wb.getSheet(0);
                 if(sheet !=null){
@@ -67,14 +78,18 @@ public class MainActivity extends AppCompatActivity {
                     int rowTotal = sheet.getColumn(colTotal-1).length;
 
                     StringBuilder sb;
-                    Log.v("Main","for문 시작");
                     for(int row = rowIndexStart; row<rowTotal;row++){
                         sb = new StringBuilder();
 
                         for(int col=0; col<colTotal;col++){
                             String contents = sheet.getCell(col,row).getContents();
-
                             Log.v("Main",col + "번째: "+contents);
+                            if(col==0){
+                                names.add(contents);
+                            }
+                            if(col==1){
+                                numbers.add(contents);
+                            }
                         }
                     }
                 }
