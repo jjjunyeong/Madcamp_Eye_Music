@@ -29,8 +29,8 @@ import java.util.List;
 
 public class Fragment2 extends Fragment {
     GridView gridView;
-    String[] names = {"image1","image2","image3","image4","image5","image6","image7","image8","image9",
-            "image10","image11","image12","image13","image14","image15","image16","image17","image18","image19","image20"};
+    String[] names = {"image1","image2","image3","image4","image5","image6","image7","image8","image9","image10","image11","image12","image13","image14","image15","image16","image17","image18","image19","image20"};
+    //int[] dates = {201102, 201102, 201102, 210102, 210104, 210104, 210223, 210224, 210224, 210228, 210303, 210416, 210418, 210418, 210420, 210510, 210512, 210520, 210522, 210601};
     int[] images = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4,R.drawable.image5,R.drawable.image6,
             R.drawable.image7,R.drawable.image8,R.drawable.image9,R.drawable.image10,R.drawable.image11,R.drawable.image12,R.drawable.image13,
             R.drawable.image14,R.drawable.image15,R.drawable.image16,R.drawable.image17,R.drawable.image18,R.drawable.image19,R.drawable.image20};
@@ -49,7 +49,7 @@ public class Fragment2 extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedName = names[i];
                 int selectedImage = images[i];
-                Toast.makeText(getActivity(), names[i], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), names[i], Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), ClickedItemActivity.class);
                 intent.putExtra("name",selectedName);
                 intent.putExtra("image",selectedImage);
@@ -63,7 +63,7 @@ public class Fragment2 extends Fragment {
     }
 
     public class CustomAdapter extends BaseAdapter{
-        private String[] imageNames;
+        private String[] imageNames; //String[]>int[]
         private int[] imagesPhoto;
         private Fragment2 context;
         private LayoutInflater layoutInflater;
@@ -97,10 +97,10 @@ public class Fragment2 extends Fragment {
                 view = layoutInflater.inflate(R.layout.fragment2_row_items, viewGroup, false);
             }
 
-            TextView tvName = view.findViewById(R.id.tvName);
+            //TextView tvName = view.findViewById(R.id.tvName);
             ImageView imageView = view.findViewById(R.id.imageView);
 
-            tvName.setText(imageNames[i]);
+            //tvName.setText(imageNames[i]);
             imageView.setImageResource(imagesPhoto[i]);
 
             return view;
