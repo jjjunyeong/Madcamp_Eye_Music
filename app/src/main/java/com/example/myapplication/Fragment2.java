@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -20,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.ClickedItemActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,11 +32,20 @@ import java.util.List;
 
 public class Fragment2 extends Fragment {
     GridView gridView;
+    FloatingActionButton add_btn;
+    FloatingActionButton camera_btn;
+    FloatingActionButton gallery_btn;
+    Animation fromBottom, toBottom, rotateOpen, rotateClose;
+    Boolean clicked = false;
+
     String[] names = {"image1","image2","image3","image4","image5","image6","image7","image8","image9","image10","image11","image12","image13","image14","image15","image16","image17","image18","image19","image20"};
     //int[] dates = {201102, 201102, 201102, 210102, 210104, 210104, 210223, 210224, 210224, 210228, 210303, 210416, 210418, 210418, 210420, 210510, 210512, 210520, 210522, 210601};
     int[] images = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4,R.drawable.image5,R.drawable.image6,
             R.drawable.image7,R.drawable.image8,R.drawable.image9,R.drawable.image10,R.drawable.image11,R.drawable.image12,R.drawable.image13,
             R.drawable.image14,R.drawable.image15,R.drawable.image16,R.drawable.image17,R.drawable.image18,R.drawable.image19,R.drawable.image20};
+
+//    private val rotateOpen: Animation by lazy{AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim)}
+
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -59,7 +71,73 @@ public class Fragment2 extends Fragment {
             }
         });
 
+        fromBottom = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.from_bottom_anim);
+        toBottom = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.to_bottom_anim);
+        rotateOpen = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.rotate_open_anim);
+        rotateClose = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.rotate_close_anim);
+
+        add_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
+        camera_btn = (FloatingActionButton) rootView.findViewById(R.id.camera_btn);
+        gallery_btn = (FloatingActionButton) rootView.findViewById(R.id.gallery_btn);
+
+        add_btn.setOnClickListener(new AddBtnClickListener());
+        camera_btn.setOnClickListener(new CameraBtnClickListener());
+        gallery_btn.setOnClickListener(new GalleryBtnClickListener());
+
         return rootView;
+    }
+
+
+    class AddBtnClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View view){
+            onAddButtonClicked(view);
+            Toast.makeText(getActivity(), "add clicked", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class CameraBtnClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View view){
+            Toast.makeText(getActivity(), "camera clicked", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class GalleryBtnClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View view){
+            Toast.makeText(getActivity(), "gallery clicked", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void onAddButtonClicked(View view){
+        setVisibility(clicked, view);
+        setAnimation(clicked);
+        clicked = !clicked;
+    }
+
+    void setVisibility(Boolean clicked, View view){
+        if(!clicked){
+            camera_btn.setVisibility(view.VISIBLE);
+            gallery_btn.setVisibility(view.VISIBLE);
+        }
+        else{
+            camera_btn.setVisibility(view.INVISIBLE);
+            gallery_btn.setVisibility(view.INVISIBLE);
+        }
+    }
+
+    void setAnimation(Boolean clicked) {
+        if(!clicked){
+            camera_btn.startAnimation(fromBottom);
+            gallery_btn.startAnimation(fromBottom);
+            add_btn.startAnimation(rotateOpen);
+        }
+        else{
+            camera_btn.startAnimation(toBottom);
+            gallery_btn.startAnimation(toBottom);
+            add_btn.startAnimation(rotateClose);
+        }
     }
 
     public class CustomAdapter extends BaseAdapter{

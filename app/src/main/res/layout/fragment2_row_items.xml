@@ -29,5 +29,4 @@
 <!--            android:layout_centerHorizontal="true"-->
 <!--            android:id="@+id/tvName"/>-->
     </RelativeLayout>
-
 </androidx.cardview.widget.CardView>
