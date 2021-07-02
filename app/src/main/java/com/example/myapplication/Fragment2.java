@@ -38,6 +38,7 @@ public class Fragment2 extends Fragment {
     Animation fromBottom, toBottom, rotateOpen, rotateClose;
     Boolean clicked = false;
 
+
     String[] names = {"image1","image2","image3","image4","image5","image6","image7","image8","image9","image10","image11","image12","image13","image14","image15","image16","image17","image18","image19","image20"};
     //int[] dates = {201102, 201102, 201102, 210102, 210104, 210104, 210223, 210224, 210224, 210228, 210303, 210416, 210418, 210418, 210420, 210510, 210512, 210520, 210522, 210601};
     int[] images = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4,R.drawable.image5,R.drawable.image6,
@@ -69,6 +70,7 @@ public class Fragment2 extends Fragment {
                 startActivity(intent);
                 //((StartActivity_Interface)parentActivity).startMyIntent(intent);
             }
+
         });
 
         fromBottom = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.from_bottom_anim);
