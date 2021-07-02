@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.text.Editable;
@@ -72,8 +73,25 @@ public class Fragment1 extends Fragment implements View.OnClickListener, TextWat
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        if(requestCode==1){
+            if(resultCode==-1){
+                Toast.makeText(getContext(),"3",Toast.LENGTH_SHORT).show();
+                String newName = data.getStringExtra("name");
+                String newNumber = data.getStringExtra("number");
+
+                if(newName.length() !=0 && newNumber.length() !=0){
+                    arrayList.add(new MainData(newName,newNumber));
+                }
+            }
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         Toast.makeText(getContext(),"이제 좀 됐으면...",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), PopupActivity.class);
+        startActivityForResult(intent, 1);
     }
 
     @Override
