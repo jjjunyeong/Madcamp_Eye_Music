@@ -40,7 +40,7 @@ public class ClickedItemActivity extends AppCompatActivity  {
 
         if(intent.getExtras() != null){
             String selectedName = intent.getStringExtra("name");
-            int selectedImage = intent.getIntExtra("image",0);
+            Integer selectedImage = intent.getIntExtra("image",0);
 
             textView.setText(selectedName);
             imageView.setImage(ImageSource.resource(selectedImage));
