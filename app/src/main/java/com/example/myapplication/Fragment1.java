@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +32,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.myapplication.MainActivity.arrayIndex;
+import static com.example.myapplication.MainActivity.mDbOpenHelper;
+import static com.example.myapplication.MainActivity.setTextLength;
+
 public class Fragment1 extends Fragment implements TextWatcher {
 
-    private ArrayList<MainData> arrayList = new ArrayList<>();
+    public static ArrayList<MainData> arrayList = new ArrayList<>();
     RecyclerviewAdapter recyclerviewAdapter;
+    static RecyclerView recyclerView;
 
     public static List nameinFrag = new ArrayList();
     public static List numberinFrag = new ArrayList();
@@ -49,10 +56,9 @@ public class Fragment1 extends Fragment implements TextWatcher {
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment1_layout,container,false);
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.recyclerview);
+        recyclerView = (RecyclerView)view.findViewById(R.id.recyclerview);
         EditText editText = (EditText)view.findViewById(R.id.search_et);
         editText.addTextChangedListener(this);
-
 
         initDataset();
 
@@ -93,14 +99,40 @@ public class Fragment1 extends Fragment implements TextWatcher {
     public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if(requestCode==1){
             if(resultCode==-1){
-                Toast.makeText(getContext(),"3",Toast.LENGTH_SHORT).show();
                 String newName = data.getStringExtra("name");
                 String newNumber = data.getStringExtra("number");
 
                 if(newName.length() !=0 && newNumber.length() !=0){
+                    mDbOpenHelper.open();
+                    mDbOpenHelper.insertColumn(newName,newNumber);
                     arrayList.add(new MainData(newName,newNumber));
+                    showDatabase("name");
+                    Context context = getContext();
+                    recyclerviewAdapter = new RecyclerviewAdapter(context,arrayList);
+                    recyclerView.setAdapter(recyclerviewAdapter);
+//                    Context context = getContext();
+//                    Context context = (LayoutInflater)getLayoutInflater().inflate(R.layout.fragment1_layout,,false);//container가 뭘까...?
+//                    recyclerviewAdapter = new RecyclerviewAdapter(context,arrayList);
+//                    recyclerView.setAdapter(recyclerviewAdapter);
                 }
             }
+        }
+    }
+
+    public void showDatabase(String sort){
+        Cursor iCursor = mDbOpenHelper.sortColumn(sort);
+        arrayIndex.clear();
+        nameinFrag.clear();
+        numberinFrag.clear();
+        while(iCursor.moveToNext()){
+            String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
+            String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
+            tempName = setTextLength(tempName,10);
+            String tempNumber = iCursor.getString(iCursor.getColumnIndex("number"));
+            tempNumber = setTextLength(tempNumber,10);
+            arrayIndex.add(tempIndex);
+            nameinFrag.add(tempName);
+            numberinFrag.add(tempNumber);
         }
     }
 

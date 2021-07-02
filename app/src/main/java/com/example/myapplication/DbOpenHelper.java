@@ -14,7 +14,7 @@ public class DbOpenHelper {
 
     private static final String DATABASE_NAME = "InnerDatabase(SQLite).db";
     private static final int DATABASE_VERSION = 1;
-    public static SQLiteDatabase mDB;
+    private static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
     private Context mCtx;
 
@@ -51,6 +51,7 @@ public class DbOpenHelper {
     public void close(){
         mDB.close();
     }
+
 
     // Insert DB
     public long insertColumn(String name, String number){

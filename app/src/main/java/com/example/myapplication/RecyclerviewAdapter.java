@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -15,6 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+
+import static com.example.myapplication.Fragment1.arrayList;
+import static com.example.myapplication.Fragment1.recyclerView;
+import static com.example.myapplication.MainActivity.arrayIndex;
+import static com.example.myapplication.MainActivity.mDbOpenHelper;
+import static com.example.myapplication.MainActivity.setTextLength;
 
 public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapter.CustomViewHolder> implements Filterable {
 
@@ -44,17 +54,53 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         holder.number_tv.setText(filteredList.get(position).getNumber_tv());
 
         holder.itemView.setTag(position);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                StringBuffer bf = new StringBuffer();
-                bf.append(holder.name_tv.getText().toString());
-                bf.append(holder.number_tv.getText().toString());
+            public boolean onLongClick(View v) {
+                Long nowIndex = Long.parseLong(arrayIndex.get(position));
+                AlertDialog.Builder dialog = new AlertDialog.Builder(v.getContext());
+                dialog.setTitle("데이터 삭제")
+                        .setMessage("해당 데이터를 삭제 하시겠습니까?")
+                        .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(v.getContext(), "데이터를 삭제했습니다.", Toast.LENGTH_SHORT).show();
+                                mDbOpenHelper.deleteColumn(nowIndex);
+                                arrayList.remove(position);
+                                showDatabase("name");
+                                Context context = v.getContext();
+                                RecyclerviewAdapter recyclerviewAdapter = new RecyclerviewAdapter(context,arrayList);
+                                recyclerView.setAdapter(recyclerviewAdapter);
 
-                Toast.makeText(v.getContext(),bf,Toast.LENGTH_SHORT).show();
+                                //showDatabase(sort);
+                            }
+                        })
+                        .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(v.getContext(), "삭제를 취소했습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .create()
+                        .show();
+                return false;
             }
         });
+    }
 
+    public void showDatabase(String sort){
+        Cursor iCursor = mDbOpenHelper.sortColumn(sort);
+        arrayIndex.clear();
+        arrayList.clear();
+        while(iCursor.moveToNext()){
+            String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
+            String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
+            tempName = setTextLength(tempName,10);
+            String tempNumber = iCursor.getString(iCursor.getColumnIndex("number"));
+            tempNumber = setTextLength(tempNumber,10);
+            arrayIndex.add(tempIndex);
+            arrayList.add(new MainData(tempName,tempNumber));
+        }
     }
 
     @Override
