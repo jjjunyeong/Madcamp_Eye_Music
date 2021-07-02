@@ -8,10 +8,10 @@
     android:clickable="true"
     tools:context=".ClickedItemActivity">
 
-    <ImageView
+    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/imageView"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
+        android:layout_width="350dp"
+        android:layout_height="450dp"
         android:layout_centerInParent="true"
         android:src="@mipmap/ic_launcher"
         android:scaleType="centerInside"/>
