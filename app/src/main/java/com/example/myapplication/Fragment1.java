@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fragment1 extends Fragment implements View.OnClickListener, TextWatcher {
+public class Fragment1 extends Fragment implements TextWatcher {
 
     private ArrayList<MainData> arrayList = new ArrayList<>();
     RecyclerviewAdapter recyclerviewAdapter;
@@ -104,12 +104,6 @@ public class Fragment1 extends Fragment implements View.OnClickListener, TextWat
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(getContext(),"이제 좀 됐으면...",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), PopupActivity.class);
-        startActivityForResult(intent, 1);
-    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -137,6 +131,8 @@ public class Fragment1 extends Fragment implements View.OnClickListener, TextWat
     class AddNumberBtnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view){
+            Intent intent = new Intent(getActivity(), PopupActivity.class);
+            startActivityForResult(intent, 1);
             Toast.makeText(getActivity(), "add number clicked", Toast.LENGTH_SHORT).show();
         }
     }
