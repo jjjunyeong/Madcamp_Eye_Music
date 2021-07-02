@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.example.myapplication.ClickedItemActivity;
@@ -41,13 +42,17 @@ import jxl.Workbook;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    List names = new ArrayList();
-    List numbers = new ArrayList();
+    private DbOpenHelper mDbOpenHelper;
+    static List names = new ArrayList();
+    static List numbers = new ArrayList();
+
+    String sort = "name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mDbOpenHelper = new DbOpenHelper(this);
         readExcel(names, numbers);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -58,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
+
+
+        mDbOpenHelper.open();
+        mDbOpenHelper.create();
+        showDatabase(sort);
 
         Fragment1.nameinFrag = names;
         Fragment1.numberinFrag = numbers;
@@ -75,29 +85,48 @@ public class MainActivity extends AppCompatActivity {
                     int rowIndexStart=1;
                     int rowTotal = sheet.getColumn(colTotal-1).length;
 
-                    StringBuilder sb;
                     for(int row = rowIndexStart; row<rowTotal;row++){
-                        sb = new StringBuilder();
+                        String contents_name = sheet.getCell(0,row).getContents().toString();
+                        String contents_number = sheet.getCell(1,row).getContents().toString();
 
-                        for(int col=0; col<colTotal;col++){
-                            String contents = sheet.getCell(col,row).getContents();
-                            Log.v("Main",col + "번째: "+contents);
-                            if(col==0){
-                                names.add(contents);
-                            }
-                            if(col==1){
-                                numbers.add(contents);
-                            }
-                        }
+                        Log.i("Main",contents_name);
+                        mDbOpenHelper.open();
+                        Log.v("Main","2");
+                        mDbOpenHelper.insertColumn(contents_name,contents_number);
+                        Log.v("Main","3");
                     }
                 }
             }
-
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
+    public void showDatabase(String sort){
+        Cursor iCursor = mDbOpenHelper.sortColumn(sort);
+        Log.d("showDatabase", "DB Size: " + iCursor.getCount());
+        names.clear();
+        numbers.clear();
+        while(iCursor.moveToNext()){
+            String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
+            String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
+            tempName = setTextLength(tempName,10);
+            String tempNumber = iCursor.getString(iCursor.getColumnIndex("number"));
+            tempNumber = setTextLength(tempNumber,10);
 
+            names.add(tempName);
+            numbers.add(tempNumber);
+        }
+    }
+
+    public String setTextLength(String text, int length){
+        if(text.length()<length){
+            int gap = length - text.length();
+            for (int i=0; i<gap; i++){
+                text = text + " ";
+            }
+        }
+        return text;
+    }
 
 }
