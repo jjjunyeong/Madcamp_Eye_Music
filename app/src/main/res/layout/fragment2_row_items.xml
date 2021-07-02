@@ -9,7 +9,7 @@
     app:cardBackgroundColor="#000"
     app:cardCornerRadius="4dp"
     android:layout_height="wrap_content">
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -19,7 +19,18 @@
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:src="@mipmap/ic_launcher"
+            android:clickable="false"
             android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:id="@+id/heart"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/heart"
+            android:visibility="invisible"
+            android:clickable="true"
+            android:layout_gravity="top|right"
+            />
 <!--        <TextView-->
 <!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->
@@ -28,5 +39,5 @@
 <!--            android:layout_below="@+id/imageView"-->
 <!--            android:layout_centerHorizontal="true"-->
 <!--            android:id="@+id/tvName"/>-->
-    </RelativeLayout>
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

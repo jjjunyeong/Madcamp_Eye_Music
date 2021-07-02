@@ -48,6 +48,7 @@ public class Fragment2 extends Fragment {
     FloatingActionButton gallery_btn;
     Animation fromBottom, toBottom, rotateOpen, rotateClose;
     Boolean clicked = false;
+    Boolean heart_visible = false;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int CAMERA_REQUEST_CODE = 102;
 
@@ -64,14 +65,13 @@ public class Fragment2 extends Fragment {
                 "JPEG_20210104_image6.jpg","JPEG_20210223_image7.jpg","JPEG_20210224_image8.jpg","JPEG_20210224_image9.jpg","JPEG_20210228_image10.jpg",
                 "JPEG_20210303_image11.jpg","JPEG_20210416_image12.jpg","JPEG_20210418_image13.jpg","JPEG_20210418_image14.jpg","JPEG_20210420_image15.jpg",
                 "JPEG_20210510_image16.jpg","JPEG_20210512_image17.jpg","JPEG_20210520_image18.jpg","JPEG_20210522_image19.jpg","JPEG_20210601_image20.jpg"};
-        //ArrayList<String> img_names = new ArrayList<String>();
+
         img_names = new ArrayList<String>();
         img_names.addAll(Arrays.asList(names));
 
         Integer[] images = {R.drawable.image1,R.drawable.image2,R.drawable.image3,R.drawable.image4,R.drawable.image5,R.drawable.image6,
                 R.drawable.image7,R.drawable.image8,R.drawable.image9,R.drawable.image10,R.drawable.image11,R.drawable.image12,R.drawable.image13,
                 R.drawable.image14,R.drawable.image15,R.drawable.image16,R.drawable.image17,R.drawable.image18,R.drawable.image19,R.drawable.image20};
-        //ArrayList<Integer> img_numbers = new ArrayList<Integer>();
         img_numbers = new ArrayList<Integer>();
         img_numbers.addAll(Arrays.asList(images));
 
@@ -80,6 +80,23 @@ public class Fragment2 extends Fragment {
         gridView = (GridView) rootView.findViewById(R.id.gridView);
         CustomAdapter customAdapter = new CustomAdapter(img_names,img_numbers,this);
         gridView.setAdapter(customAdapter);
+
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int i, long id) {
+                ImageView heart = (ImageView)view.findViewById(R.id.heart);
+
+                if(heart.isShown()){
+                    heart.setVisibility(View.INVISIBLE);
+                }else{
+                    heart.setVisibility(View.VISIBLE);
+                }
+
+                Toast.makeText(getActivity(), "long click", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
