@@ -122,8 +122,7 @@ public class Fragment1 extends Fragment implements TextWatcher {
     public void showDatabase(String sort){
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         arrayIndex.clear();
-        nameinFrag.clear();
-        numberinFrag.clear();
+        arrayList.clear();
         while(iCursor.moveToNext()){
             String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
             String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
@@ -131,8 +130,7 @@ public class Fragment1 extends Fragment implements TextWatcher {
             String tempNumber = iCursor.getString(iCursor.getColumnIndex("number"));
             tempNumber = setTextLength(tempNumber,10);
             arrayIndex.add(tempIndex);
-            nameinFrag.add(tempName);
-            numberinFrag.add(tempNumber);
+            arrayList.add(new MainData(tempName,tempNumber));
         }
     }
 

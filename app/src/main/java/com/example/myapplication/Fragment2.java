@@ -93,7 +93,6 @@ public class Fragment2 extends Fragment {
                     heart.setVisibility(View.VISIBLE);
                 }
 
-                Toast.makeText(getActivity(), "long click", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
