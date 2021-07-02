@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 import static com.example.myapplication.Fragment1.arrayList;
+import static com.example.myapplication.Fragment1.nameinFrag;
+import static com.example.myapplication.Fragment1.numberinFrag;
 import static com.example.myapplication.Fragment1.recyclerView;
 import static com.example.myapplication.MainActivity.arrayIndex;
 import static com.example.myapplication.MainActivity.mDbOpenHelper;
@@ -92,6 +94,8 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         arrayIndex.clear();
         arrayList.clear();
+        nameinFrag.clear();
+        numberinFrag.clear();
         while(iCursor.moveToNext()){
             String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
             String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
@@ -99,6 +103,8 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             String tempNumber = iCursor.getString(iCursor.getColumnIndex("number"));
             tempNumber = setTextLength(tempNumber,10);
             arrayIndex.add(tempIndex);
+            nameinFrag.add(tempName);
+            numberinFrag.add(tempNumber);
             arrayList.add(new MainData(tempName,tempNumber));
         }
     }

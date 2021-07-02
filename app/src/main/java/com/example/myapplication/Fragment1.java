@@ -123,6 +123,8 @@ public class Fragment1 extends Fragment implements TextWatcher {
         Cursor iCursor = mDbOpenHelper.sortColumn(sort);
         arrayIndex.clear();
         arrayList.clear();
+        nameinFrag.clear();
+        numberinFrag.clear();
         while(iCursor.moveToNext()){
             String tempIndex = iCursor.getString(iCursor.getColumnIndex("_id"));
             String tempName = iCursor.getString(iCursor.getColumnIndex("name"));
@@ -131,6 +133,8 @@ public class Fragment1 extends Fragment implements TextWatcher {
             tempNumber = setTextLength(tempNumber,10);
             arrayIndex.add(tempIndex);
             arrayList.add(new MainData(tempName,tempNumber));
+            nameinFrag.add(tempName);
+            numberinFrag.add(tempNumber);
         }
     }
 
