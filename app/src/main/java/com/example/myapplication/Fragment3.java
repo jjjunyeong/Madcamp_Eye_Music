@@ -10,9 +10,11 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,8 +34,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class Fragment3 extends Fragment {
     public final static int RECORD_PERM_CODE = 103;
+
     private int mAudioSource = MediaRecorder.AudioSource.MIC;
     private int mSampleRate = 8000; //frequency
     private int mChannelCount = AudioFormat.CHANNEL_IN_STEREO; //channelConfiguration
@@ -48,7 +57,7 @@ public class Fragment3 extends Fragment {
     private FFT transformer;
     int blockSize = 256;
     Button recordButton; //startStopButton
-    boolean started = false;
+    boolean recording = false;
 
     // Bitmap 이미지를 표시하기 위해 ImageView를 사용한다. 이 이미지는 현재 오디오 스트림에서 주파수들의 레벨을 나타낸다.
     // 이 레벨들을 그리려면 Bitmap에서 구성한 Canvas 객체와 Paint객체가 필요하다.
@@ -56,6 +65,13 @@ public class Fragment3 extends Fragment {
     Bitmap bitmap;
     Canvas canvas;
     Paint paint;
+
+    //오디오 재생
+    AudioTrack audioTrack;
+    Button playButton;
+    boolean playing = false;
+    public Thread mPlayThread = null;
+    public String mFilepath;
 
 
     @Nullable
@@ -68,6 +84,94 @@ public class Fragment3 extends Fragment {
         recordButton.setOnClickListener(new RecordButtonClickListener());
 
         transformer = new FFT(blockSize);
+
+        //오디오 재생
+        playButton = (Button) view.findViewById(R.id.play_btn);
+        playButton.setOnClickListener(new PlayButtonClickListener());
+
+
+        mRecordThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] readData = new byte[mBufferSize];
+                mFilepath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/record.pcm";
+                //Log.v("mFilepath: ", mFilepath);
+
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(mFilepath);
+                    while(recording) {
+                        int ret = audioRecord.read(readData, 0, mBufferSize);  //  AudioRecord의 read 함수를 통해 pcm data 를 읽어옴
+                        //Log.d(TAG, "read bytes is " + ret);
+                        try {
+                            fos.write(readData, 0, mBufferSize);    //  읽어온 readData 를 파일에 write 함
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                } catch(FileNotFoundException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(fos != null){
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                audioRecord.stop();
+                audioRecord.release();
+                audioRecord = null;
+
+            }
+        });
+
+
+        mPlayThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] writeData = new byte[mBufferSize];
+                FileInputStream fis = null;
+                DataInputStream dis = null;
+                try {
+                    fis = new FileInputStream(mFilepath);
+                    dis = new DataInputStream(fis);
+                    audioTrack.play();  // write 하기 전에 play 를 먼저 수행해 주어야 함
+
+                    while(playing) {
+                        try {
+                            int ret = dis.read(writeData, 0, mBufferSize);
+                            if (ret <= 0) {
+                                (getActivity()).runOnUiThread(new Runnable() { // UI 컨트롤을 위해 //////////
+                                    @Override
+                                    public void run() {
+                                        playing = false;
+                                        playButton.setText("PLAY");
+                                    }
+                                });
+                                break;
+                            }
+                            audioTrack.write(writeData, 0, ret); // AudioTrack 에 write 를 하면 스피커로 송출됨
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } finally{
+                    try {
+                        dis.close();
+                        fis.close();
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                audioTrack.stop();
+                audioTrack.release();
+                audioTrack = null;
+            }
+        });
 
         // ImageView 및 관련 객체 설정 부분
         imageView = (ImageView) view.findViewById(R.id.colorImage);
@@ -84,8 +188,8 @@ public class Fragment3 extends Fragment {
         @Override
         public void onClick(View view){
 //            Toast.makeText(getActivity(), "record button clicked", Toast.LENGTH_SHORT).show();
-            if(started){
-                started = false;
+            if(recording){
+                recording = false;
                 recordButton.setText("RECORD");
                 Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
             }else{
@@ -100,55 +204,31 @@ public class Fragment3 extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_PERM_CODE);
         }else{
             Toast.makeText(getActivity(), "start recording", Toast.LENGTH_SHORT).show();
-            started = true;
-            recordButton.setText("ON_RECORD");
-            recordTask();
+            recording = true;
+            recordButton.setText("STOP");
+            if(audioRecord == null){
+                audioRecord = new AudioRecord(mAudioSource, mSampleRate, mChannelCount, mAudioFormat, mBufferSize);
+                audioRecord.startRecording();
+            }
+            mRecordThread.start();
         }
     }
 
-    private void recordTask(){
-        mRecordThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AudioRecord audioRecord = new AudioRecord( MediaRecorder.AudioSource.MIC, mSampleRate, mChannelCount, mAudioFormat, mBufferSize);
-                short[] buffer = new short[blockSize]; //blockSize = 256
-                double[] toTransform = new double[blockSize]; //blockSize = 256
 
-                audioRecord.startRecording();
-
-                while (started) {
-                    int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
-                    Log.i("bufferReadResult", Integer.toString(bufferReadResult));
-                    // AudioRecord 객체에서 데이터를 읽은 다음에는 short 타입의 변수들을 double 타입으로
-                    // 바꾸는 루프를 처리한다.
-                    // 직접 타입 변환(casting)으로 이 작업을 처리할 수 없다. 값들이 전체 범위가 아니라 -1.0에서
-                    // 1.0 사이라서 그렇다
-                    // short를 32,767(Short.MAX_VALUE) 으로 나누면 double로 타입이 바뀌는데,
-                    // 이 값이 short의 최대값이기 때문이다.
-                    for (int i = 0; i < blockSize && i < bufferReadResult; i++) {
-                        toTransform[i] = (double) buffer[i] / Short.MAX_VALUE; // 부호 있는 16비트
-                        Log.i("buffer", Double.toString(buffer[i]));
-                        Log.i("Short.MAX_VALUE", Short.toString(Short.MAX_VALUE));
-                        Log.i("toTransform", Double.toString(toTransform[i]));
-                    }
-
-                    // 이제 double값들의 배열을 FFT 객체로 넘겨준다. FFT 객체는 이 배열을 재사용하여 출력 값을
-                    // 담는다. 포함된 데이터는 시간 도메인이 아니라
-                    // 주파수 도메인에 존재한다. 이 말은 배열의 첫 번째 요소가 시간상으로 첫 번째 샘플이 아니라는 얘기다.
-                    // 배열의 첫 번째 요소는 첫 번째 주파수 집합의 레벨을 나타낸다.
-
-                    // 256가지 값(범위)을 사용하고 있고 샘플 비율이 8,000 이므로 배열의 각 요소가 대략
-                    // 15.625Hz를 담당하게 된다. 15.625라는 숫자는 샘플 비율을 반으로 나누고(캡쳐할 수 있는
-                    // 최대 주파수는 샘플 비율의 반이다. <- 누가 그랬는데...), 다시 256으로 나누어 나온 것이다.
-                    // 따라서 배열의 첫 번째 요소로 나타난 데이터는 영(0)과 15.625Hz 사이에
-                    // 해당하는 오디오 레벨을 의미한다.
-                    //transformer.fft(toTransform);
-                }
-                audioRecord.stop();
+    private class PlayButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View view){
+            Toast.makeText(getActivity(), "play button clicked", Toast.LENGTH_SHORT).show();
+            if(playing){
+                playing = false;
+                playButton.setText("PLAY");
+                Toast.makeText(getActivity(), "finish playing", Toast.LENGTH_SHORT).show();
+            }else{
+                playing = true;
+                playButton.setText("STOP");
+                mPlayThread.start();
             }
-        });
-
-
+        }
     }
 
 
