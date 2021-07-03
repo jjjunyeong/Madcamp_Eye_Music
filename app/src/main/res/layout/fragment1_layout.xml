@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_gravity="center"
-    android:layout_height="match_parent"
-    android:background="#000">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -17,8 +16,7 @@
             android:id="@+id/search_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:textColor="#fff"/>
+            android:layout_marginLeft="5dp" />
 
     </LinearLayout>
 
@@ -31,7 +29,7 @@
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="783dp"
-            android:textColor="#fff"/>
+            />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
