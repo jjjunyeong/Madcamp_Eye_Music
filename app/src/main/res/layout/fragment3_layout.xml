@@ -5,10 +5,21 @@
     android:layout_gravity="center"
     android:layout_height="match_parent">
 
-    <TextView
+    <androidx.constraintlayout.utils.widget.ImageFilterButton
+        android:id="@+id/colorImage"
         android:layout_width="wrap_content"
+        android:layout_height="450dp" />
+
+    <Button
+        android:id="@+id/record_btn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Etc"
-        android:layout_gravity="center"
-        android:textSize="30sp"></TextView>
+        android:text="RECORD" />
+
+<!--    <Button-->
+<!--        android:id="@+id/play_btn"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="PLAY"-->
+<!--        android:onClick="ONPLAY"/>-->
 </LinearLayout>
