@@ -17,7 +17,8 @@
             android:id="@+id/search_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp" />
+            android:layout_marginLeft="5dp"
+            android:textColor="#fff"/>
 
     </LinearLayout>
 
@@ -29,7 +30,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="783dp" />
+            android:layout_height="783dp"
+            android:textColor="#fff"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
