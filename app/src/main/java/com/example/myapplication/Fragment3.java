@@ -1,5 +1,9 @@
 package com.example.myapplication;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.media.AudioFormat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +35,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -54,7 +61,7 @@ public class Fragment3 extends Fragment {
 
     public Thread mRecordThread = null;
 
-    private FFT transformer;
+    private RealDoubleFFT transformer;
     int blockSize = 256;
     Button recordButton; //startStopButton
     boolean recording = false;
@@ -66,116 +73,21 @@ public class Fragment3 extends Fragment {
     Canvas canvas;
     Paint paint;
 
-    //오디오 재생
-    AudioTrack audioTrack;
-    Button playButton;
-    boolean playing = false;
-    public Thread mPlayThread = null;
-    public String mFilepath;
-
 
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment3_layout,container,false);
+        View view = inflater.inflate(R.layout.fragment3_layout, container, false);
 
         recordButton = (Button) view.findViewById(R.id.record_btn);
         recordButton.setOnClickListener(new RecordButtonClickListener());
 
-        transformer = new FFT(blockSize);
-
-        //오디오 재생
-        playButton = (Button) view.findViewById(R.id.play_btn);
-        playButton.setOnClickListener(new PlayButtonClickListener());
-
-
-        mRecordThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                byte[] readData = new byte[mBufferSize];
-                mFilepath = Environment.getExternalStorageDirectory().getAbsolutePath() +"/record.pcm";
-                //Log.v("mFilepath: ", mFilepath);
-
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(mFilepath);
-                    while(recording) {
-                        int ret = audioRecord.read(readData, 0, mBufferSize);  //  AudioRecord의 read 함수를 통해 pcm data 를 읽어옴
-                        //Log.d(TAG, "read bytes is " + ret);
-                        try {
-                            fos.write(readData, 0, mBufferSize);    //  읽어온 readData 를 파일에 write 함
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        }
-                    }
-                } catch(FileNotFoundException e) {
-                    e.printStackTrace();
-                } finally {
-                    if(fos != null){
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                audioRecord.stop();
-                audioRecord.release();
-                audioRecord = null;
-
-            }
-        });
-
-
-        mPlayThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                byte[] writeData = new byte[mBufferSize];
-                FileInputStream fis = null;
-                DataInputStream dis = null;
-                try {
-                    fis = new FileInputStream(mFilepath);
-                    dis = new DataInputStream(fis);
-                    audioTrack.play();  // write 하기 전에 play 를 먼저 수행해 주어야 함
-
-                    while(playing) {
-                        try {
-                            int ret = dis.read(writeData, 0, mBufferSize);
-                            if (ret <= 0) {
-                                (getActivity()).runOnUiThread(new Runnable() { // UI 컨트롤을 위해 //////////
-                                    @Override
-                                    public void run() {
-                                        playing = false;
-                                        playButton.setText("PLAY");
-                                    }
-                                });
-                                break;
-                            }
-                            audioTrack.write(writeData, 0, ret); // AudioTrack 에 write 를 하면 스피커로 송출됨
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } finally{
-                    try {
-                        dis.close();
-                        fis.close();
-                    }catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                audioTrack.stop();
-                audioTrack.release();
-                audioTrack = null;
-            }
-        });
+        transformer = new RealDoubleFFT(blockSize);
 
         // ImageView 및 관련 객체 설정 부분
         imageView = (ImageView) view.findViewById(R.id.colorImage);
-        bitmap = Bitmap.createBitmap(256, 100, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
         paint.setColor(Color.GREEN);
@@ -184,52 +96,67 @@ public class Fragment3 extends Fragment {
         return view;
     }
 
-    private class RecordButtonClickListener implements View.OnClickListener{
+    private class RecordButtonClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View view){
+        public void onClick(View view) {
 //            Toast.makeText(getActivity(), "record button clicked", Toast.LENGTH_SHORT).show();
-            if(recording){
+            if (recording) {
                 recording = false;
                 recordButton.setText("RECORD");
                 Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 askRecordButtonPermissions();
             }
         }
     }
 
     private void askRecordButtonPermissions() {
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             //ask for permission on runtime
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, RECORD_PERM_CODE);
-        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_PERM_CODE);
+        } else {
             Toast.makeText(getActivity(), "start recording", Toast.LENGTH_SHORT).show();
             recording = true;
             recordButton.setText("STOP");
-            if(audioRecord == null){
-                audioRecord = new AudioRecord(mAudioSource, mSampleRate, mChannelCount, mAudioFormat, mBufferSize);
-                audioRecord.startRecording();
+            if (audioRecord == null) {
+                mRecordThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AudioRecord audioRecord = new AudioRecord(mAudioSource, mSampleRate, mChannelCount, mAudioFormat, mBufferSize);
+                        short[] buffer = new short[blockSize]; //blockSize = 256
+                        double[] toTransform = new double[blockSize]; //blockSize = 256
+
+                        audioRecord.startRecording();
+
+                        while (recording) {
+                            int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
+                            Log.i("bufferReadResult", Integer.toString(bufferReadResult));
+
+                            for (int i = 0; i < blockSize && i < bufferReadResult; i++) {
+                                toTransform[i] = (double) buffer[i] / Short.MAX_VALUE; // 부호 있는 16비트
+                                Log.i("buffer", Double.toString(buffer[i]));
+                                Log.i("Short.MAX_VALUE", Short.toString(Short.MAX_VALUE));
+                                Log.i("toTransform", Double.toString(toTransform[i]));
+                            }
+                            transformer.ft(toTransform);
+                            canvas.drawColor(Color.BLACK);
+
+                            for (int i = 0; i < toTransform.length; i++) {
+                                int x = i;
+                                int downy = (int) (100 - (toTransform[i] * 10));
+                                int upy = 100;
+
+                                canvas.drawLine(x*4, downy*8, x*4, upy*8, paint);
+                            }
+                            imageView.invalidate();
+                        }
+                        audioRecord.stop();
+                    }
+                });
             }
             mRecordThread.start();
         }
     }
 
-
-    private class PlayButtonClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View view){
-            Toast.makeText(getActivity(), "play button clicked", Toast.LENGTH_SHORT).show();
-            if(playing){
-                playing = false;
-                playButton.setText("PLAY");
-                Toast.makeText(getActivity(), "finish playing", Toast.LENGTH_SHORT).show();
-            }else{
-                playing = true;
-                playButton.setText("STOP");
-                mPlayThread.start();
-            }
-        }
-    }
-
-
 }
+

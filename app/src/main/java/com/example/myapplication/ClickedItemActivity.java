@@ -19,8 +19,6 @@ import android.widget.TextView;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
-import pl.polidea.view.ZoomView;
-
 import static java.lang.Math.abs;
 
 public class ClickedItemActivity extends AppCompatActivity  {
