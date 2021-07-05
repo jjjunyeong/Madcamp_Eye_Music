@@ -46,6 +46,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Fragment3 extends Fragment {
     public final static int RECORD_PERM_CODE = 103;
@@ -89,8 +91,8 @@ public class Fragment3 extends Fragment {
         imageView = (ImageView) view.findViewById(R.id.colorImage);
         bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
-        paint = new Paint();
-        paint.setColor(Color.GREEN);
+//        paint = new Paint();
+//        paint.setColor(Color.GREEN);
         imageView.setImageBitmap(bitmap);
 
         return view;
@@ -111,9 +113,9 @@ public class Fragment3 extends Fragment {
     }
 
     private void askRecordButtonPermissions() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            //ask for permission on runtime
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_PERM_CODE);
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            //ask for record permission on runtime
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RECORD_PERM_CODE);
         } else {
             Toast.makeText(getActivity(), "start recording", Toast.LENGTH_SHORT).show();
             recording = true;
@@ -127,8 +129,16 @@ public class Fragment3 extends Fragment {
                         double[] toTransform = new double[blockSize]; //blockSize = 256
 
                         audioRecord.startRecording();
+                        ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
+                        int count = 0;
 
                         while (recording) {
+//                            if(count<100){
+//                                count++;
+//                                continue;
+//                            }
+//                            count = 0;
+
                             int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
                             Log.i("bufferReadResult", Integer.toString(bufferReadResult));
 
@@ -142,11 +152,34 @@ public class Fragment3 extends Fragment {
                             canvas.drawColor(Color.BLACK);
 
                             for (int i = 0; i < toTransform.length; i++) {
-                                int x = i;
-                                int downy = (int) (100 - (toTransform[i] * 10));
-                                int upy = 100;
+//                                int x = i;
+//                                int downy = (int) (100 - (toTransform[i] * 10));
+//                                int upy = 100;
 
-                                canvas.drawLine(x*4, downy*8, x*4, upy*8, paint);
+                                int r = (int) toTransform[i]*20;
+                                int temp = toTransform.length / 7;
+
+                                Random ran = new Random();
+                                int xmin = 0;
+                                int xmax = 1024;
+                                int ymin = 0;
+                                int ymax = 800;
+                                int xran = ran.nextInt(xmax-xmin+1) + xmin;
+                                int yran = ran.nextInt(ymax-ymin+1) + ymin;
+
+                                paint = new Paint();
+                                if(0<=i && i<=temp) paint.setColor(Color.RED);
+                                else if(temp<i && i<=temp*2) paint.setColor(Color.MAGENTA);
+                                else if(temp*2<i && i<=temp*3) paint.setColor(Color.YELLOW);
+                                else if(temp*3<i && i<=temp*4) paint.setColor(Color.GREEN);
+                                else if(temp*4<i && i<=temp*5) paint.setColor(Color.BLUE);
+                                else if(temp*5<i && i<=temp*6) paint.setColor(Color.CYAN);
+                                else paint.setColor(Color.LTGRAY);
+                                //if()
+                                //paint.setColor(Color.GREEN);
+
+                                canvas.drawCircle(xran, yran, r, paint);
+                                //canvas.drawLine(x*4, downy*8, x*4, upy*8, paint);
                             }
                             imageView.invalidate();
                         }
@@ -156,6 +189,10 @@ public class Fragment3 extends Fragment {
             }
             mRecordThread.start();
         }
+    }
+
+    public void CreateandSaveVideoFiles(ArrayList<Bitmap> MyBitmapArray){
+        return;
     }
 
 }
