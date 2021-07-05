@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MusicListActivity">
 
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#fff"
+        android:id="@+id/musiclist_name"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/musiclist_list"
         android:layout_width="match_parent"

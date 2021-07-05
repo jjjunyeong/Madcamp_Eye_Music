@@ -16,10 +16,12 @@ import java.util.ArrayList;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.viewHolder> {
     private ArrayList<String> musicData = null;
+    private ArrayList<String> artistData = null;
     private Context mContext;
 
-    MusicListAdapter(ArrayList<String> list,Context context) {
-        musicData = list;
+    MusicListAdapter(ArrayList<String> music,ArrayList<String> artist,Context context) {
+        musicData = music;
+        artistData = artist;
         mContext = context;
     }
 
@@ -35,9 +37,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.view
 
     public class viewHolder extends RecyclerView.ViewHolder{
         TextView musicName;
+        TextView artistName;
         public viewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             musicName = itemView.findViewById(R.id.music_name);
+            artistName = itemView.findViewById(R.id.artist_name);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -68,15 +72,15 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.view
     @Override
     public void onBindViewHolder(@NonNull @NotNull MusicListAdapter.viewHolder holder, int position) {
         String text = musicData.get(position);
+        String artext = artistData.get(position);
         holder.musicName.setText(text);
-
-        holder.musicName.setTag(position);
+        holder.artistName.setText(artext);
 
     }
 
     @Override
     public int getItemCount() {
-        return musicData.size() ;
+        return musicData.size();
     }
 
 

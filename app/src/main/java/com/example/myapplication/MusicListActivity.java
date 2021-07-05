@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,17 +19,33 @@ public class MusicListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
 
+        TextView textView = findViewById(R.id.musiclist_name);
+        textView.setText("Music List");
+
         Context mContext = getApplicationContext();
 
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> musiclist = new ArrayList<>();
 
-        list.add("Alcohol Free_Twice") ;
-        list.add("A Song Written Easily_OneUs") ;
-        list.add("Beautiful Beautiful_OnAndOff") ;
-        list.add("Butter_BTS") ;
-        list.add("Dun Dun Dance_OhMyGirl") ;
-        list.add("Love Sick Girls_BlackPink") ;
-        list.add("Rollin_BraveGirls") ;
+        musiclist.add("Alcohol Free") ;
+        musiclist.add("A Song Written Easily") ;
+        musiclist.add("Banana") ;
+        musiclist.add("Beautiful Beautiful") ;
+        musiclist.add("Butter") ;
+        musiclist.add("Dun Dun Dance") ;
+        musiclist.add("Love Sick Girls") ;
+        musiclist.add("Rollin") ;
+        musiclist.add("Lazenca Save Us") ;
+
+        ArrayList<String> artistlist = new ArrayList<>();
+        artistlist.add("Twice");
+        artistlist.add("OneUs");
+        artistlist.add("Minions");
+        artistlist.add("OnAndOff");
+        artistlist.add("BTS");
+        artistlist.add("OhMyGirl");
+        artistlist.add("BlackPink");
+        artistlist.add("BraveGirls");
+        artistlist.add("하현우");
 
 
         // 리사이클러뷰에 LinearLayoutManager 객체 지정.
@@ -36,7 +53,7 @@ public class MusicListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
 
         // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
-        MusicListAdapter adapter = new MusicListAdapter(list,mContext);
+        MusicListAdapter adapter = new MusicListAdapter(musiclist,artistlist,mContext);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListner(new MusicListAdapter.OnItemClickListener() {

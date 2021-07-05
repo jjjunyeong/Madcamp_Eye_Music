@@ -141,26 +141,34 @@ public class Fragment3 extends Fragment {
             musiclistButton.setText("A Song Written Easily_OneUs");
             musicLoad=true;
             music=1;
-        }else if(resultCode==2){
-            musiclistButton.setText("Beautiful Beautiful_OnAndOff");
-            musicLoad=true;
-            music=2;
+        }else if(resultCode==2) {
+            musiclistButton.setText("BANANA_Minions");
+            musicLoad = true;
+            music = 2;
         }else if(resultCode==3){
-            musiclistButton.setText("butter_BTS");
+            musiclistButton.setText("Beautiful Beautiful_OnAndOff");
             musicLoad=true;
             music=3;
         }else if(resultCode==4){
-            musiclistButton.setText("Dun Dun Dance_OhMyGirl");
+            musiclistButton.setText("butter_BTS");
             musicLoad=true;
             music=4;
         }else if(resultCode==5){
-            musiclistButton.setText("Love Sick Girls_BlackPink");
+            musiclistButton.setText("Dun Dun Dance_OhMyGirl");
             musicLoad=true;
             music=5;
         }else if(resultCode==6){
-            musiclistButton.setText("Rollin_BraveGirls");
+            musiclistButton.setText("Love Sick Girls_BlackPink");
             musicLoad=true;
             music=6;
+        }else if(resultCode==7){
+            musiclistButton.setText("Rollin_BraveGirls");
+            musicLoad=true;
+            music=7;
+        }else if(resultCode==8){
+            musiclistButton.setText("Lazenca Save Us_하현우");
+            musicLoad=true;
+            music=8;
         }
         if(player!=null){
             player.release();
@@ -183,15 +191,19 @@ public class Fragment3 extends Fragment {
                         break;
                     case 1: player = MediaPlayer.create(getContext(),R.raw.asongwritteneasily_oneus);
                         break;
-                    case 2: player = MediaPlayer.create(getContext(),R.raw.beautifulbeautiful_onandoff);
+                    case 2: player = MediaPlayer.create(getContext(),R.raw.banana_minions);
                         break;
-                    case 3: player = MediaPlayer.create(getContext(),R.raw.bts_butter);
+                    case 3: player = MediaPlayer.create(getContext(),R.raw.beautifulbeautiful_onandoff);
                         break;
-                    case 4: player = MediaPlayer.create(getContext(),R.raw.dundundance_ohmygirl);
+                    case 4: player = MediaPlayer.create(getContext(),R.raw.bts_butter);
                         break;
-                    case 5: player = MediaPlayer.create(getContext(),R.raw.lovesickgirls_blackpink);
+                    case 5: player = MediaPlayer.create(getContext(),R.raw.dundundance_ohmygirl);
                         break;
-                    case 6: player = MediaPlayer.create(getContext(),R.raw.rollin_bravegirls);
+                    case 6: player = MediaPlayer.create(getContext(),R.raw.lovesickgirls_blackpink);
+                        break;
+                    case 7: player = MediaPlayer.create(getContext(),R.raw.rollin_bravegirls);
+                        break;
+                    case 8: player = MediaPlayer.create(getContext(),R.raw.lazencasaveus_hahyunwoo);
                         break;
                 }
                 player.start();
@@ -320,24 +332,34 @@ public class Fragment3 extends Fragment {
 
                         int count = 0;
 
-                        while (recording) {
+                        //자연스러운 변화 만들기
+                        int[][] subPaintPosition;
+                        int[] tempPaintposition;
+                        subPaintPosition = new int[9][blockSize*3];
+                        tempPaintposition = new int[blockSize*3];
 
+                        while (recording) {
+                            if(count<1000000){
+                                count++;
+                                continue;
+                            }
+                            count=0;
                             int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
                             Log.i("bufferReadResult", Integer.toString(bufferReadResult));
 
                             for (int i = 0; i < blockSize && i < bufferReadResult; i++) {
-                                toTransform[i] = (double) buffer[i] / Short.MAX_VALUE; // 부호 있는 16비트
-                                //Log.i("buffer", Double.toString(buffer[i]));
-                                //Log.i("Short.MAX_VALUE", Short.toString(Short.MAX_VALUE));
-                                //Log.i("toTransform", Double.toString(toTransform[i]));
+                                toTransform[i] = (double) buffer[i] / Short.MAX_VALUE;
                             }
                             transformer.ft(toTransform);
                             canvas.drawColor(Color.BLACK);
+                            int temp = blockSize / 7;
+                            paint = new Paint();
 
-                            for (int i = 0; i < toTransform.length; i++) {
-
+                            for (int i = 0; i < blockSize; i++) {
+                                if(toTransform[i]*20<40){
+                                    continue;
+                                }
                                 int r = (int) toTransform[i]*20;
-                                int temp = toTransform.length / 7;
 
                                 Random ran = new Random();
                                 int xmin = 0;
@@ -347,21 +369,51 @@ public class Fragment3 extends Fragment {
                                 int xran = ran.nextInt(xmax-xmin+1) + xmin;
                                 int yran = ran.nextInt(ymax-ymin+1) + ymin;
 
-                                paint = new Paint();
-                                if(i<=temp) paint.setColor(Color.RED);
-                                else if(i<=temp*2) paint.setColor(Color.MAGENTA);
-                                else if(i<=temp*3) paint.setColor(Color.YELLOW);
-                                else if(i<=temp*4) paint.setColor(Color.GREEN);
-                                else if(i<=temp*5) paint.setColor(Color.BLUE);
-                                else if(i<=temp*6) paint.setColor(Color.CYAN);
+                                if(i<=temp/2) paint.setColor(Color.RED);
+                                else if(i<=temp) paint.setColor(Color.MAGENTA);
+                                else if(i<=temp*2) paint.setColor(Color.YELLOW);
+                                else if(i<=temp*3) paint.setColor(Color.GREEN);
+                                else if(i<=temp*4) paint.setColor(Color.BLUE);
+                                else if(i<=temp*5) paint.setColor(Color.CYAN);
                                 else paint.setColor(Color.LTGRAY);
-
                                 canvas.drawCircle(xran, yran, r, paint);
 
+                                tempPaintposition[i*3]=r;
+                                tempPaintposition[i*3+1]=xran;
+                                tempPaintposition[i*3+2]=yran;
                             }
-
+                            //이전 내역의 원들을 투명도 조절하여 출력
+//                            int x=0;
+//                            int y=0;
+//                            int r=0;
+//                            paint = new Paint();
+//                            for(int i=0; i < 9; i++){
+//                                for(int j=0; j<blockSize; j++){
+//                                    r=subPaintPosition[i][j*3];
+//                                    x=subPaintPosition[i][j*3+1];
+//                                    y=subPaintPosition[i][j*3+2];
+//                                    if(i<=temp) paint.setColor(Color.RED);
+//                                    else if(i<=temp*2) paint.setColor(Color.MAGENTA);
+//                                    else if(i<=temp*3) paint.setColor(Color.YELLOW);
+//                                    else if(i<=temp*4) paint.setColor(Color.GREEN);
+//                                    else if(i<=temp*5) paint.setColor(Color.BLUE);
+//                                    else if(i<=temp*6) paint.setColor(Color.CYAN);
+//                                    else paint.setColor(Color.LTGRAY);
+//                                    paint.setAlpha((i+1)*10);
+//                                    canvas.drawCircle(x, y, r, paint);
+//                                }
+//                            }
+//                            //이전 내역들을 queue 형식으로 저장
+//                            subPaintPosition[0]=subPaintPosition[1];
+//                            subPaintPosition[1]=subPaintPosition[2];
+//                            subPaintPosition[2]=subPaintPosition[3];
+//                            subPaintPosition[3]=subPaintPosition[4];
+//                            subPaintPosition[4]=subPaintPosition[5];
+//                            subPaintPosition[5]=subPaintPosition[6];
+//                            subPaintPosition[6]=subPaintPosition[7];
+//                            subPaintPosition[7]=subPaintPosition[8];
+//                            subPaintPosition[8]=tempPaintposition;
                             imageView.invalidate();
-
 
                             imageView.buildDrawingCache();
                             Bitmap bit = imageView.getDrawingCache();
