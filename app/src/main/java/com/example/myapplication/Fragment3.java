@@ -120,25 +120,51 @@ public class Fragment3 extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode==0){
+            musiclistButton.setText("Alcohol Free_Twice");
+            musicLoad=true;
+        }else if(resultCode==1){
+            musiclistButton.setText("A Song Written Easily_OneUs");
+            musicLoad=true;
+        }else if(resultCode==2){
+            musiclistButton.setText("Beautiful Beautiful_OnAndOff");
+            musicLoad=true;
+        }else if(resultCode==3){
+            musiclistButton.setText("butter_BTS");
+            musicLoad=true;
+        }else if(resultCode==4){
+            musiclistButton.setText("Dun Dun Dance_OhMyGirl");
+            musicLoad=true;
+        }else if(resultCode==5){
+            musiclistButton.setText("Love Sick Girls_BlackPink");
+            musicLoad=true;
+        }else if(resultCode==7){
+            musiclistButton.setText("Rollin_BraveGirls");
+            musicLoad=true;
+        }
+    }
+
     private void playAudio() {
-        if(musiclistButton.getText()!="Sample Title"){
+        if(musicLoad){
+            if (player != null && !player.isPlaying()) {
+                player.seekTo(musicPosition);
+                player.start();
 
+                Toast.makeText(getContext(), "재시작됨.", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                closePlayer();
+
+                player = MediaPlayer.create(getContext(),R.raw.bts_butter);
+                player.start();
+
+                Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+            }
         }
-        if (player != null && !player.isPlaying()) {
-            player.seekTo(musicPosition);
-            player.start();
-
-            Toast.makeText(getContext(), "재시작됨.", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            closePlayer();
-
-            player = MediaPlayer.create(getContext(),R.raw.bts_butter);
-            player.start();
-
-            Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
-        }
-
     }
     public void closePlayer() {
         if (player != null) {

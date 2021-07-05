@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +16,43 @@ import java.util.ArrayList;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.viewHolder> {
     private ArrayList<String> musicData = null;
+    private Context mContext;
+
+    MusicListAdapter(ArrayList<String> list,Context context) {
+        musicData = list;
+        mContext = context;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(View v,int position);
+    }
+
+    private OnItemClickListener mListner = null;
+
+    public void setOnItemClickListner(OnItemClickListener listner){
+        this.mListner = listner;
+    }
 
     public class viewHolder extends RecyclerView.ViewHolder{
         TextView musicName;
         public viewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             musicName = itemView.findViewById(R.id.music_name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(mListner !=null){
+                            mListner.onItemClick(v,pos);
+                        }
+                    }
+                }
+            });
         }
     }
 
-    MusicListAdapter(ArrayList<String> list) {
-        musicData = list;
-    }
 
     @NonNull
     @NotNull
@@ -45,12 +71,6 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.view
         holder.musicName.setText(text);
 
         holder.musicName.setTag(position);
-        holder.musicName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
     }
 
