@@ -55,6 +55,10 @@ public class Fragment2 extends Fragment {
     public ArrayList<Integer> img_numbers;
     public ArrayList<String> img_names;
 
+    public static Fragment2 newInstance(){
+        return new Fragment2();
+    }
+
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -133,7 +137,6 @@ public class Fragment2 extends Fragment {
         @Override
         public void onClick(View view){
             onAddButtonClicked(view);
-//            Toast.makeText(getActivity(), "add clicked", Toast.LENGTH_SHORT).show();
         }
     }
 

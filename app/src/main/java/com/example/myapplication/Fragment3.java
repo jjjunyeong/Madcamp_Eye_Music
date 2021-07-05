@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -52,7 +54,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
-public class Fragment3 extends Fragment{
+public class Fragment3 extends Fragment {
+    MediaPlayer player;
+    int musicPosition;
+    boolean musicLoad;
     public final static int RECORD_PERM_CODE = 103;
 
     private int mAudioSource = MediaRecorder.AudioSource.MIC;
@@ -72,6 +77,9 @@ public class Fragment3 extends Fragment{
 
     int blockSize = 256;
     Button recordButton; //startStopButton
+    Button musiclistButton;
+    ImageButton playButton;
+    ImageButton pauseButton;
     boolean recording = false;
 
     // Bitmap 이미지를 표시하기 위해 ImageView를 사용한다. 이 이미지는 현재 오디오 스트림에서 주파수들의 레벨을 나타낸다.
@@ -96,6 +104,15 @@ public class Fragment3 extends Fragment{
         recordButton = (Button) view.findViewById(R.id.record_btn);
         recordButton.setOnClickListener(new RecordButtonClickListener());
 
+        musiclistButton = (Button) view.findViewById(R.id.btn_title);
+        musiclistButton.setOnClickListener(new MusicListButtonClickListener());
+
+        playButton = (ImageButton) view.findViewById(R.id.btn_play);
+        playButton.setOnClickListener(new PlayButtonClickListener());
+
+        pauseButton = (ImageButton) view.findViewById(R.id.btn_pause);
+        pauseButton.setOnClickListener(new PauseButtonClickListener());
+
         transformer = new RealDoubleFFT(blockSize);
 
         // ImageView 및 관련 객체 설정 부분
@@ -106,6 +123,63 @@ public class Fragment3 extends Fragment{
 
         return view;
     }
+
+    private void playAudio() {
+        if(musiclistButton.getText()!="Sample Title"){
+
+        }
+        if (player != null && !player.isPlaying()) {
+            player.seekTo(musicPosition);
+            player.start();
+
+            Toast.makeText(getContext(), "재시작됨.", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            closePlayer();
+
+            player = MediaPlayer.create(getContext(),R.raw.bts_butter);
+            player.start();
+
+            Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    public void closePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+    private void pauseAudio() {
+        if (player != null) {
+            musicPosition = player.getCurrentPosition();
+            player.pause();
+
+            Toast.makeText(getContext(), "일시정지됨.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private class MusicListButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), MusicListActivity.class);
+            startActivityForResult(intent,111);
+        }
+    }
+    private class PlayButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            playAudio();
+        }
+    }
+    private class PauseButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            pauseAudio();
+        }
+    }
+
 
     private class RecordButtonClickListener implements View.OnClickListener {
         @Override
