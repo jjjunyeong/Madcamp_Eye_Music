@@ -42,6 +42,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -74,6 +75,8 @@ public class Fragment3 extends Fragment {
     Bitmap bitmap;
     Canvas canvas;
     Paint paint;
+    File file;
+    FileOutputStream fos;
 
 
     @Nullable
@@ -89,11 +92,16 @@ public class Fragment3 extends Fragment {
 
         // ImageView 및 관련 객체 설정 부분
         imageView = (ImageView) view.findViewById(R.id.colorImage);
-        bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888); //1024, 800
         canvas = new Canvas(bitmap);
 //        paint = new Paint();
 //        paint.setColor(Color.GREEN);
         imageView.setImageBitmap(bitmap);
+
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android studio");
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
 
         return view;
     }
@@ -133,11 +141,6 @@ public class Fragment3 extends Fragment {
                         int count = 0;
 
                         while (recording) {
-//                            if(count<100){
-//                                count++;
-//                                continue;
-//                            }
-//                            count = 0;
 
                             int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
                             Log.i("bufferReadResult", Integer.toString(bufferReadResult));
@@ -180,8 +183,28 @@ public class Fragment3 extends Fragment {
 
                                 canvas.drawCircle(xran, yran, r, paint);
                                 //canvas.drawLine(x*4, downy*8, x*4, upy*8, paint);
+
                             }
+
+//                            if(count!=10){
+//                                count++;
+//                                continue;
+//                            }
+
                             imageView.invalidate();
+                            imageView.buildDrawingCache();
+                            Bitmap bit = imageView.getDrawingCache();
+                            try{
+                                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android studio" + count + ".png");
+                                fos = new FileOutputStream(file);
+                                if(fos!=null) {
+                                    bit.compress(Bitmap.CompressFormat.PNG, 50, fos);
+                                }
+                                fos.close();
+                            }catch(Exception e){
+                                Log.e("testSaveView", "Exception: " + e.toString());
+                            }
+                            count++;
                         }
                         audioRecord.stop();
                     }
