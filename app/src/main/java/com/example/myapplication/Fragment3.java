@@ -94,6 +94,7 @@ public class Fragment3 extends Fragment {
     FileOutputStream fos;
     Bitmap copy;
 
+    ImageButton videosButton;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -109,6 +110,9 @@ public class Fragment3 extends Fragment {
 
         playButton = (ImageButton) view.findViewById(R.id.btn_play);
         playButton.setOnClickListener(new PlayButtonClickListener());
+
+        videosButton = (ImageButton) view.findViewById(R.id.videos_btn);
+        videosButton.setOnClickListener(new VideosButtonClickListener());
 
         transformer = new RealDoubleFFT(blockSize);
 
@@ -231,6 +235,13 @@ public class Fragment3 extends Fragment {
         }
     }
 
+    private class VideosButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), VideoListActivity.class);
+            startActivity(intent);
+        }
+    }
 
     private class RecordButtonClickListener implements View.OnClickListener {
         @Override

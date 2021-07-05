@@ -33,9 +33,14 @@
             android:background="#000"
             android:src="@drawable/ic_not_recording" />
 
-        <Space
-            android:layout_width="40dp"
-            android:layout_height="match_parent" />
+        <ImageButton
+            android:id="@+id/videos_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="#000"
+            android:src="@drawable/ic_videos_btn" />
+
+
     </LinearLayout>
 
 <!--    <Button-->
