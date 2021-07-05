@@ -57,6 +57,7 @@ import java.util.Random;
 public class Fragment3 extends Fragment {
     MediaPlayer player;
     int musicPosition;
+    int music;
     boolean musicLoad;
     public final static int RECORD_PERM_CODE = 103;
 
@@ -113,7 +114,7 @@ public class Fragment3 extends Fragment {
 
         // ImageView 및 관련 객체 설정 부분
         imageView = (ImageView) view.findViewById(R.id.colorImage);
-        bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888); //1024, 800
+        bitmap = Bitmap.createBitmap(1070, 1600, Bitmap.Config.ARGB_8888); //1024, 800
         canvas = new Canvas(bitmap);
         imageView.setImageBitmap(bitmap);
 
@@ -127,24 +128,35 @@ public class Fragment3 extends Fragment {
         if(resultCode==0){
             musiclistButton.setText("Alcohol Free_Twice");
             musicLoad=true;
+            music=0;
         }else if(resultCode==1){
             musiclistButton.setText("A Song Written Easily_OneUs");
             musicLoad=true;
+            music=1;
         }else if(resultCode==2){
             musiclistButton.setText("Beautiful Beautiful_OnAndOff");
             musicLoad=true;
+            music=2;
         }else if(resultCode==3){
             musiclistButton.setText("butter_BTS");
             musicLoad=true;
+            music=3;
         }else if(resultCode==4){
             musiclistButton.setText("Dun Dun Dance_OhMyGirl");
             musicLoad=true;
+            music=4;
         }else if(resultCode==5){
             musiclistButton.setText("Love Sick Girls_BlackPink");
             musicLoad=true;
-        }else if(resultCode==7){
+            music=5;
+        }else if(resultCode==6){
             musiclistButton.setText("Rollin_BraveGirls");
             musicLoad=true;
+            music=6;
+        }
+        if(player!=null){
+            player.release();
+            player=null;
         }
     }
 
@@ -158,10 +170,23 @@ public class Fragment3 extends Fragment {
             }
             else{
                 closePlayer();
-
-                player = MediaPlayer.create(getContext(),R.raw.bts_butter);
+                switch (music){
+                    case 0: player = MediaPlayer.create(getContext(),R.raw.alcoholfree_twice);
+                        break;
+                    case 1: player = MediaPlayer.create(getContext(),R.raw.asongwritteneasily_oneus);
+                        break;
+                    case 2: player = MediaPlayer.create(getContext(),R.raw.beautifulbeautiful_onandoff);
+                        break;
+                    case 3: player = MediaPlayer.create(getContext(),R.raw.bts_butter);
+                        break;
+                    case 4: player = MediaPlayer.create(getContext(),R.raw.dundundance_ohmygirl);
+                        break;
+                    case 5: player = MediaPlayer.create(getContext(),R.raw.lovesickgirls_blackpink);
+                        break;
+                    case 6: player = MediaPlayer.create(getContext(),R.raw.rollin_bravegirls);
+                        break;
+                }
                 player.start();
-
                 Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -255,7 +280,7 @@ public class Fragment3 extends Fragment {
                             file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getTime + ".mp4");
                             fos = new FileOutputStream(file);
                             if(fos!=null) {
-                                bitmapToVideoEncoder.startEncoding(1024, 800, file);
+                                bitmapToVideoEncoder.startEncoding(1070, 1600, file);
                             }
                             fos.close();
                             }catch(Exception e){
@@ -285,9 +310,9 @@ public class Fragment3 extends Fragment {
 
                                 Random ran = new Random();
                                 int xmin = 0;
-                                int xmax = 1024;
+                                int xmax = 1070;
                                 int ymin = 0;
-                                int ymax = 800;
+                                int ymax = 1600;
                                 int xran = ran.nextInt(xmax-xmin+1) + xmin;
                                 int yran = ran.nextInt(ymax-ymin+1) + ymin;
 
