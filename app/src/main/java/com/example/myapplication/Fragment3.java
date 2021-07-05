@@ -76,11 +76,12 @@ public class Fragment3 extends Fragment {
 //    private BitmapToVideoEncoder bitmapToVideoEncoder;
 
     int blockSize = 256;
-    Button recordButton; //startStopButton
+    ImageButton recordButton; //startStopButton
     Button musiclistButton;
     ImageButton playButton;
     ImageButton pauseButton;
     boolean recording = false;
+    boolean playing = false;
 
     // Bitmap 이미지를 표시하기 위해 ImageView를 사용한다. 이 이미지는 현재 오디오 스트림에서 주파수들의 레벨을 나타낸다.
     // 이 레벨들을 그리려면 Bitmap에서 구성한 Canvas 객체와 Paint객체가 필요하다.
@@ -90,8 +91,6 @@ public class Fragment3 extends Fragment {
     Paint paint;
     File file;
     FileOutputStream fos;
-
-    ArrayList<Bitmap> bitmaps;
     Bitmap copy;
 
 
@@ -101,7 +100,7 @@ public class Fragment3 extends Fragment {
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment3_layout, container, false);
 
-        recordButton = (Button) view.findViewById(R.id.record_btn);
+        recordButton = (ImageButton) view.findViewById(R.id.record_btn);
         recordButton.setOnClickListener(new RecordButtonClickListener());
 
         musiclistButton = (Button) view.findViewById(R.id.btn_title);
@@ -109,9 +108,6 @@ public class Fragment3 extends Fragment {
 
         playButton = (ImageButton) view.findViewById(R.id.btn_play);
         playButton.setOnClickListener(new PlayButtonClickListener());
-
-        pauseButton = (ImageButton) view.findViewById(R.id.btn_pause);
-        pauseButton.setOnClickListener(new PauseButtonClickListener());
 
         transformer = new RealDoubleFFT(blockSize);
 
@@ -170,13 +166,17 @@ public class Fragment3 extends Fragment {
     private class PlayButtonClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            playAudio();
-        }
-    }
-    private class PauseButtonClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View v) {
-            pauseAudio();
+            if(playing){
+                playing = false;
+                pauseAudio();
+                playButton.setImageResource(R.drawable.ic_playing);
+                Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
+            } else {
+                playing = true;
+                playAudio();
+                playButton.setImageResource(R.drawable.ic_pause);
+                //askRecordButtonPermissions();
+            }
         }
     }
 
@@ -187,8 +187,8 @@ public class Fragment3 extends Fragment {
 //            Toast.makeText(getActivity(), "record button clicked", Toast.LENGTH_SHORT).show();
             if (recording) {
                 recording = false;
-                recordButton.setText("RECORD");
-                Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
+                recordButton.setImageResource(R.drawable.ic_not_recording);
+                //Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
             } else {
                 askRecordButtonPermissions();
             }
@@ -200,9 +200,10 @@ public class Fragment3 extends Fragment {
             //ask for record permission on runtime
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RECORD_PERM_CODE);
         } else {
-            Toast.makeText(getActivity(), "start recording", Toast.LENGTH_SHORT).show();
+            recordButton.setImageResource(R.drawable.ic_recording);
             recording = true;
-            recordButton.setText("STOP");
+            //Toast.makeText(getActivity(), "start recording", Toast.LENGTH_SHORT).show();
+
             if (audioRecord == null) {
                 mRecordThread = new Thread(new Runnable() {
                     @Override
