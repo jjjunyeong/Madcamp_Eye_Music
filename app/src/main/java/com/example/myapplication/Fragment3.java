@@ -70,6 +70,7 @@ public class Fragment3 extends Fragment {
 
     //RecordAudio recordTask;
     AudioRecord audioRecord = null;
+    MediaRecorder recorder;
 
     public Thread mRecordThread = null;
 
@@ -94,6 +95,8 @@ public class Fragment3 extends Fragment {
     File file;
     FileOutputStream fos;
     Bitmap copy;
+
+    File music_file;
 
     ImageButton videosButton;
 
@@ -275,6 +278,11 @@ public class Fragment3 extends Fragment {
                         short[] buffer = new short[blockSize]; //blockSize = 256
                         double[] toTransform = new double[blockSize]; //blockSize = 256
 
+                        recorder = new MediaRecorder();
+                        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+
                         audioRecord.startRecording();
 
                         BitmapToVideoEncoder bitmapToVideoEncoder = new BitmapToVideoEncoder(new BitmapToVideoEncoder.IBitmapToVideoEncoderCallback() {
@@ -292,6 +300,11 @@ public class Fragment3 extends Fragment {
 
 
                             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + getTime + ".mp4");
+                            music_file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + getTime + ".mp3");
+
+                            recorder.setOutputFile(music_file);
+                            recorder.prepare();
+                            recorder.start();
 
                             bitmapToVideoEncoder.startEncoding(1070, 1600, file);
 
@@ -373,6 +386,8 @@ public class Fragment3 extends Fragment {
                         }
                         bitmapToVideoEncoder.stopEncoding();
                         audioRecord.stop();
+                        recorder.stop();
+                        recorder.release();
 
                         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                         Uri contentUri = Uri.fromFile(file);
