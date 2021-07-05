@@ -17,6 +17,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -288,12 +289,18 @@ public class Fragment3 extends Fragment {
                             Date date = new Date(now);
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                             String getTime = sdf.format(date);
-                            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getTime + ".mp4");
-                            fos = new FileOutputStream(file);
-                            if(fos!=null) {
-                                bitmapToVideoEncoder.startEncoding(1070, 1600, file);
-                            }
-                            fos.close();
+
+
+                            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + getTime + ".mp4");
+
+                            bitmapToVideoEncoder.startEncoding(1070, 1600, file);
+
+
+//                            fos = new FileOutputStream(file);
+//                            if(fos!=null) {
+//                                bitmapToVideoEncoder.startEncoding(1070, 1600, file);
+//                            }
+//                            fos.close();
                             }catch(Exception e){
                                 Log.e("testSaveView", "Exception: " + e.toString());
                             }
@@ -366,6 +373,12 @@ public class Fragment3 extends Fragment {
                         }
                         bitmapToVideoEncoder.stopEncoding();
                         audioRecord.stop();
+
+                        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                        Uri contentUri = Uri.fromFile(file);
+                        mediaScanIntent.setData(contentUri);
+                        getActivity().sendBroadcast(mediaScanIntent);
+
                     }
                 });
             }

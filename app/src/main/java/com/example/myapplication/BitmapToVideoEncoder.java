@@ -189,7 +189,7 @@ public class BitmapToVideoEncoder {
             if (bitmap == null) continue;
 
             //byte[] byteConvertFrame = getNV21(bitmap.getWidth(), bitmap.getHeight(), bitmap);
-            byte[] byteConvertFrame = getNV21(1024, 800, bitmap);
+            byte[] byteConvertFrame = getNV21(1070, 1600, bitmap);
 
             long TIMEOUT_USEC = 500000;
             int inputBufIndex = mediaCodec.dequeueInputBuffer(TIMEOUT_USEC);
