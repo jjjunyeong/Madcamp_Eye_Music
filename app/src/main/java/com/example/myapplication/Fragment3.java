@@ -47,10 +47,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
-public class Fragment3 extends Fragment {
+public class Fragment3 extends Fragment{
     public final static int RECORD_PERM_CODE = 103;
 
     private int mAudioSource = MediaRecorder.AudioSource.MIC;
@@ -65,6 +67,9 @@ public class Fragment3 extends Fragment {
     public Thread mRecordThread = null;
 
     private RealDoubleFFT transformer;
+
+//    private BitmapToVideoEncoder bitmapToVideoEncoder;
+
     int blockSize = 256;
     Button recordButton; //startStopButton
     boolean recording = false;
@@ -77,6 +82,9 @@ public class Fragment3 extends Fragment {
     Paint paint;
     File file;
     FileOutputStream fos;
+
+    ArrayList<Bitmap> bitmaps;
+    Bitmap copy;
 
 
     @Nullable
@@ -94,14 +102,7 @@ public class Fragment3 extends Fragment {
         imageView = (ImageView) view.findViewById(R.id.colorImage);
         bitmap = Bitmap.createBitmap(1024, 800, Bitmap.Config.ARGB_8888); //1024, 800
         canvas = new Canvas(bitmap);
-//        paint = new Paint();
-//        paint.setColor(Color.GREEN);
         imageView.setImageBitmap(bitmap);
-
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android studio");
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
 
         return view;
     }
@@ -137,7 +138,29 @@ public class Fragment3 extends Fragment {
                         double[] toTransform = new double[blockSize]; //blockSize = 256
 
                         audioRecord.startRecording();
-                        ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
+
+                        BitmapToVideoEncoder bitmapToVideoEncoder = new BitmapToVideoEncoder(new BitmapToVideoEncoder.IBitmapToVideoEncoderCallback() {
+                            @Override
+                            public void onEncodingComplete(File outputFile) {
+                                //Toast.makeText(getActivity(), "Encoding Complete", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        try{
+                            long now = System.currentTimeMillis();
+                            Date date = new Date(now);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                            String getTime = sdf.format(date);
+                            file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getTime + ".mp4");
+                            fos = new FileOutputStream(file);
+                            if(fos!=null) {
+                                bitmapToVideoEncoder.startEncoding(1024, 800, file);
+                            }
+                            fos.close();
+                            }catch(Exception e){
+                                Log.e("testSaveView", "Exception: " + e.toString());
+                            }
+
                         int count = 0;
 
                         while (recording) {
@@ -147,17 +170,14 @@ public class Fragment3 extends Fragment {
 
                             for (int i = 0; i < blockSize && i < bufferReadResult; i++) {
                                 toTransform[i] = (double) buffer[i] / Short.MAX_VALUE; // 부호 있는 16비트
-                                Log.i("buffer", Double.toString(buffer[i]));
-                                Log.i("Short.MAX_VALUE", Short.toString(Short.MAX_VALUE));
-                                Log.i("toTransform", Double.toString(toTransform[i]));
+                                //Log.i("buffer", Double.toString(buffer[i]));
+                                //Log.i("Short.MAX_VALUE", Short.toString(Short.MAX_VALUE));
+                                //Log.i("toTransform", Double.toString(toTransform[i]));
                             }
                             transformer.ft(toTransform);
                             canvas.drawColor(Color.BLACK);
 
                             for (int i = 0; i < toTransform.length; i++) {
-//                                int x = i;
-//                                int downy = (int) (100 - (toTransform[i] * 10));
-//                                int upy = 100;
 
                                 int r = (int) toTransform[i]*20;
                                 int temp = toTransform.length / 7;
@@ -171,51 +191,49 @@ public class Fragment3 extends Fragment {
                                 int yran = ran.nextInt(ymax-ymin+1) + ymin;
 
                                 paint = new Paint();
-                                if(0<=i && i<=temp) paint.setColor(Color.RED);
-                                else if(temp<i && i<=temp*2) paint.setColor(Color.MAGENTA);
-                                else if(temp*2<i && i<=temp*3) paint.setColor(Color.YELLOW);
-                                else if(temp*3<i && i<=temp*4) paint.setColor(Color.GREEN);
-                                else if(temp*4<i && i<=temp*5) paint.setColor(Color.BLUE);
-                                else if(temp*5<i && i<=temp*6) paint.setColor(Color.CYAN);
+                                if(i<=temp) paint.setColor(Color.RED);
+                                else if(i<=temp*2) paint.setColor(Color.MAGENTA);
+                                else if(i<=temp*3) paint.setColor(Color.YELLOW);
+                                else if(i<=temp*4) paint.setColor(Color.GREEN);
+                                else if(i<=temp*5) paint.setColor(Color.BLUE);
+                                else if(i<=temp*6) paint.setColor(Color.CYAN);
                                 else paint.setColor(Color.LTGRAY);
-                                //if()
-                                //paint.setColor(Color.GREEN);
 
                                 canvas.drawCircle(xran, yran, r, paint);
-                                //canvas.drawLine(x*4, downy*8, x*4, upy*8, paint);
 
                             }
-
-//                            if(count!=10){
-//                                count++;
-//                                continue;
-//                            }
 
                             imageView.invalidate();
+
+
                             imageView.buildDrawingCache();
                             Bitmap bit = imageView.getDrawingCache();
-                            try{
-                                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android studio" + count + ".png");
-                                fos = new FileOutputStream(file);
-                                if(fos!=null) {
-                                    bit.compress(Bitmap.CompressFormat.PNG, 50, fos);
-                                }
-                                fos.close();
-                            }catch(Exception e){
-                                Log.e("testSaveView", "Exception: " + e.toString());
+                            if(bit != null){
+                                copy = bit.copy(bit.getConfig(), true);
                             }
-                            count++;
+                            bitmapToVideoEncoder.queueFrame(copy);
+
+                            //saving as png files
+//                            try{
+//                                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android studio" + count + ".png");
+//                                fos = new FileOutputStream(file);
+//                                if(fos!=null) {
+//                                    bit.compress(Bitmap.CompressFormat.PNG, 50, fos);
+//                                }
+//                                fos.close();
+//                            }catch(Exception e){
+//                                Log.e("testSaveView", "Exception: " + e.toString());
+//                            }
+//                            count++;
+
                         }
+                        bitmapToVideoEncoder.stopEncoding();
                         audioRecord.stop();
                     }
                 });
             }
             mRecordThread.start();
         }
-    }
-
-    public void CreateandSaveVideoFiles(ArrayList<Bitmap> MyBitmapArray){
-        return;
     }
 
 }
