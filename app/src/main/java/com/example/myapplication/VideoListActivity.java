@@ -67,7 +67,7 @@ public class VideoListActivity extends AppCompatActivity {
             String name = getVideoNametoUri(data.getData());
 
             String filepath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + name;
-            Toast.makeText(this, filepath, Toast.LENGTH_SHORT).show();
+       //     Toast.makeText(this, filepath, Toast.LENGTH_SHORT).show();
             TextView textView = findViewById(R.id.videoText);
             textView.setText(filepath);
 

@@ -54,7 +54,6 @@ public class Fragment1 extends Fragment implements TextWatcher {
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment1_layout,container,false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerview);
         EditText editText = (EditText)view.findViewById(R.id.search_et);
@@ -158,7 +157,7 @@ public class Fragment1 extends Fragment implements TextWatcher {
         @Override
         public void onClick(View view){
             onAddButtonClicked(view);
-            Toast.makeText(getActivity(), "add clicked", Toast.LENGTH_SHORT).show();
+     //       Toast.makeText(getActivity(), "add clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -167,7 +166,7 @@ public class Fragment1 extends Fragment implements TextWatcher {
         public void onClick(View view){
             Intent intent = new Intent(getActivity(), PopupActivity.class);
             startActivityForResult(intent, 1);
-            Toast.makeText(getActivity(), "add number clicked", Toast.LENGTH_SHORT).show();
+   //         Toast.makeText(getActivity(), "add number clicked", Toast.LENGTH_SHORT).show();
         }
     }
 

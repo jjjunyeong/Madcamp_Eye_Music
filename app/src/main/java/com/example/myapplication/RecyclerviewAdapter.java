@@ -66,7 +66,7 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(v.getContext(), "데이터를 삭제했습니다.", Toast.LENGTH_SHORT).show();
+                              //  Toast.makeText(v.getContext(), "데이터를 삭제했습니다.", Toast.LENGTH_SHORT).show();
                                 mDbOpenHelper.deleteColumn(nowIndex);
                                 arrayList.remove(position);
                                 showDatabase("name");
@@ -80,7 +80,7 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
                         .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(v.getContext(), "삭제를 취소했습니다.", Toast.LENGTH_SHORT).show();
+                           //     Toast.makeText(v.getContext(), "삭제를 취소했습니다.", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .create()
