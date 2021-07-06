@@ -31,4 +31,9 @@
     녹화가 끝난 후에는 그 오른 쪽의 목록 버튼을 클릭하여 갤러리에 저장된 영상을 로딩할 수 있습니다.
     
     
+   ![20210706_213859](https://user-images.githubusercontent.com/54852021/124604522-fb2e0780-dea5-11eb-9c04-8887b0c426b9.gif) ![20210706_214152](https://user-images.githubusercontent.com/54852021/124604661-1d278a00-dea6-11eb-8596-6a8e83ee8e22.gif)
+   
+   
+   
+    
 
