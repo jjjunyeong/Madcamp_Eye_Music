@@ -19,11 +19,11 @@
         <activity
             android:name=".MusicListActivity"
             android:label="@string/title_activity_music_list"
-            android:theme="@style/Theme.MyApplication.NoActionBar"></activity>
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
         <activity android:name=".ClickedItemActivity" />
-        <activity android:name=".VideoListActivity"/>
+        <activity android:name=".VideoListActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApplication.NoActionBar">
             <intent-filter>
@@ -31,6 +31,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+
         </activity>
         <activity
             android:name=".PopupActivity"

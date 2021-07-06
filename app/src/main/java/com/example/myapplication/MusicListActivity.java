@@ -35,6 +35,7 @@ public class MusicListActivity extends AppCompatActivity {
         musiclist.add("Love Sick Girls") ;
         musiclist.add("Rollin") ;
         musiclist.add("Lazenca Save Us") ;
+        musiclist.add("Piano Left to Right") ;
 
         ArrayList<String> artistlist = new ArrayList<>();
         artistlist.add("Twice");
@@ -46,6 +47,7 @@ public class MusicListActivity extends AppCompatActivity {
         artistlist.add("BlackPink");
         artistlist.add("BraveGirls");
         artistlist.add("하현우");
+        artistlist.add("None");
 
 
         // 리사이클러뷰에 LinearLayoutManager 객체 지정.

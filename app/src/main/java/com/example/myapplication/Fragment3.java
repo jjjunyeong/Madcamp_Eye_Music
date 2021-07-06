@@ -19,6 +19,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -100,6 +101,8 @@ public class Fragment3 extends Fragment {
 
     ImageButton videosButton;
 
+
+
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
@@ -134,19 +137,19 @@ public class Fragment3 extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode==0){
-            musiclistButton.setText("Alcohol Free_Twice");
+            musiclistButton.setText("Alcohol Free");
             musicLoad=true;
             music=0;
         }else if(resultCode==1){
-            musiclistButton.setText("A Song Written Easily_OneUs");
+            musiclistButton.setText("A Song Written Easily");
             musicLoad=true;
             music=1;
         }else if(resultCode==2) {
-            musiclistButton.setText("BANANA_Minions");
+            musiclistButton.setText("BANANA");
             musicLoad = true;
             music = 2;
         }else if(resultCode==3){
-            musiclistButton.setText("Beautiful Beautiful_OnAndOff");
+            musiclistButton.setText("Beautiful Beautiful");
             musicLoad=true;
             music=3;
         }else if(resultCode==4){
@@ -154,11 +157,11 @@ public class Fragment3 extends Fragment {
             musicLoad=true;
             music=4;
         }else if(resultCode==5){
-            musiclistButton.setText("Dun Dun Dance_OhMyGirl");
+            musiclistButton.setText("Dun Dun Dance");
             musicLoad=true;
             music=5;
         }else if(resultCode==6){
-            musiclistButton.setText("Love Sick Girls_BlackPink");
+            musiclistButton.setText("Love Sick Girls");
             musicLoad=true;
             music=6;
         }else if(resultCode==7){
@@ -166,9 +169,14 @@ public class Fragment3 extends Fragment {
             musicLoad=true;
             music=7;
         }else if(resultCode==8){
-            musiclistButton.setText("Lazenca Save Us_하현우");
+            musiclistButton.setText("Lazenca Save Us");
             musicLoad=true;
             music=8;
+        }
+        else if(resultCode==9){
+            musiclistButton.setText("Piano Left to Right");
+            musicLoad=true;
+            music=9;
         }
         if(player!=null){
             player.release();
@@ -204,6 +212,8 @@ public class Fragment3 extends Fragment {
                     case 7: player = MediaPlayer.create(getContext(),R.raw.rollin_bravegirls);
                         break;
                     case 8: player = MediaPlayer.create(getContext(),R.raw.lazencasaveus_hahyunwoo);
+                        break;
+                    case 9: player = MediaPlayer.create(getContext(),R.raw.piano_x2);
                         break;
                 }
                 player.start();
@@ -272,8 +282,51 @@ public class Fragment3 extends Fragment {
             }
         }
     }
+    boolean isRecording = false;
+    private void startRecording() {
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFile(music_file);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        try {
+            recorder.prepare();
+            recorder.start();
+            isRecording = true; }
+        catch (IOException e) {
+            Log.e("Main", "prepare() failed");
+            e.printStackTrace(); }
+    }
+    private void stopRecording() {
+        if(isRecording){ recorder.stop(); }
+        recorder.reset();
+        recorder.release();
+        isRecording = false; }
+    private void checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 마시멜로우 버전과 같거나 이상이라면
+            if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+
+
+                    Toast.makeText(getContext(), "외부 저장소 사용을 위해 읽기/쓰기 필요", Toast.LENGTH_SHORT).show();
+                }
+
+                requestPermissions(new String[]
+                                {Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},
+                        2);  //마지막 인자는 체크해야될 권한 갯수
+
+            } else {
+                //Toast.makeText(this, "권한 승인되었음", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     private void askRecordButtonPermissions() {
+        checkPermission();
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //ask for record permission on runtime
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RECORD_PERM_CODE);
@@ -290,11 +343,12 @@ public class Fragment3 extends Fragment {
                         short[] buffer = new short[blockSize]; //blockSize = 256
                         double[] toTransform = new double[blockSize]; //blockSize = 256
 
-                        recorder = new MediaRecorder();
-                        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//                        recorder = new MediaRecorder();
+//                        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//                        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//                        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
 
+                        startRecording();
                         audioRecord.startRecording();
 
                         BitmapToVideoEncoder bitmapToVideoEncoder = new BitmapToVideoEncoder(new BitmapToVideoEncoder.IBitmapToVideoEncoderCallback() {
@@ -310,13 +364,12 @@ public class Fragment3 extends Fragment {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                             String getTime = sdf.format(date);
 
-
                             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + getTime + ".mp4");
                             music_file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC) + "/" + getTime + ".mp3");
 
-                            recorder.setOutputFile(music_file);
-                            recorder.prepare();
-                            recorder.start();
+//                            recorder.setOutputFile(music_file);
+//                            recorder.prepare();
+//                            recorder.start();
 
                             bitmapToVideoEncoder.startEncoding(1070, 1600, file);
 
@@ -335,28 +388,23 @@ public class Fragment3 extends Fragment {
                         //자연스러운 변화 만들기
                         int[][] subPaintPosition;
                         int[] tempPaintposition;
-                        subPaintPosition = new int[9][blockSize*3];
+                        subPaintPosition = new int[4][blockSize*3];
                         tempPaintposition = new int[blockSize*3];
-
                         while (recording) {
-                            if(count<1000000){
-                                count++;
-                                continue;
-                            }
-                            count=0;
                             int bufferReadResult = audioRecord.read(buffer, 0, blockSize); //blockSize = 256
-                            Log.i("bufferReadResult", Integer.toString(bufferReadResult));
 
                             for (int i = 0; i < blockSize && i < bufferReadResult; i++) {
                                 toTransform[i] = (double) buffer[i] / Short.MAX_VALUE;
                             }
                             transformer.ft(toTransform);
                             canvas.drawColor(Color.BLACK);
-                            int temp = blockSize / 7;
                             paint = new Paint();
 
                             for (int i = 0; i < blockSize; i++) {
                                 if(toTransform[i]*20<40){
+                                    tempPaintposition[i*3]=0;
+                                    tempPaintposition[i*3+1]=0;
+                                    tempPaintposition[i*3+2]=0;
                                     continue;
                                 }
                                 int r = (int) toTransform[i]*20;
@@ -369,40 +417,46 @@ public class Fragment3 extends Fragment {
                                 int xran = ran.nextInt(xmax-xmin+1) + xmin;
                                 int yran = ran.nextInt(ymax-ymin+1) + ymin;
 
-                                if(i<=temp/2) paint.setColor(Color.RED);
-                                else if(i<=temp) paint.setColor(Color.MAGENTA);
-                                else if(i<=temp*2) paint.setColor(Color.YELLOW);
-                                else if(i<=temp*3) paint.setColor(Color.GREEN);
-                                else if(i<=temp*4) paint.setColor(Color.BLUE);
-                                else if(i<=temp*5) paint.setColor(Color.CYAN);
-                                else paint.setColor(Color.LTGRAY);
-                                canvas.drawCircle(xran, yran, r, paint);
+//                                if(i<=8) paint.setColor(navy);
+//                                else if(i<=15) paint.setColor(blue);
+//                                else if(i<=30) paint.setColor(green);
+//                                else if(i<=60) paint.setColor(yellow);
+//                                else if(i<=100) paint.setColor(orange);
+//                                else paint.setColor(red);
+//                                canvas.drawCircle(xran, yran, r, paint);
 
                                 tempPaintposition[i*3]=r;
                                 tempPaintposition[i*3+1]=xran;
                                 tempPaintposition[i*3+2]=yran;
                             }
-                            //이전 내역의 원들을 투명도 조절하여 출력
-//                            int x=0;
-//                            int y=0;
-//                            int r=0;
-//                            paint = new Paint();
-//                            for(int i=0; i < 9; i++){
-//                                for(int j=0; j<blockSize; j++){
-//                                    r=subPaintPosition[i][j*3];
-//                                    x=subPaintPosition[i][j*3+1];
-//                                    y=subPaintPosition[i][j*3+2];
-//                                    if(i<=temp) paint.setColor(Color.RED);
-//                                    else if(i<=temp*2) paint.setColor(Color.MAGENTA);
-//                                    else if(i<=temp*3) paint.setColor(Color.YELLOW);
-//                                    else if(i<=temp*4) paint.setColor(Color.GREEN);
-//                                    else if(i<=temp*5) paint.setColor(Color.BLUE);
-//                                    else if(i<=temp*6) paint.setColor(Color.CYAN);
-//                                    else paint.setColor(Color.LTGRAY);
-//                                    paint.setAlpha((i+1)*10);
-//                                    canvas.drawCircle(x, y, r, paint);
-//                                }
-//                            }
+                            subPaintPosition[0]=subPaintPosition[1];
+                            subPaintPosition[1]=subPaintPosition[2];
+                            subPaintPosition[2]=subPaintPosition[3];
+                            subPaintPosition[3]=tempPaintposition;//subPaintPosition[4];
+//                            subPaintPosition[4]=subPaintPosition[5];
+//                            subPaintPosition[5]=subPaintPosition[6];
+//                            subPaintPosition[6]=subPaintPosition[7];
+//                            subPaintPosition[7]=subPaintPosition[8];
+//                            subPaintPosition[8]=tempPaintposition;
+                            for(int i=0; i < 4; i++){
+                                int x=0;
+                                int y=0;
+                                int r=0;
+                                for(int j=0;j<blockSize;j++){
+                                    r=subPaintPosition[i][j*3];
+                                    x=subPaintPosition[i][j*3+1];
+                                    y=subPaintPosition[i][j*3+2];
+                                    painting(x,y,r,j,i,canvas);
+                                }
+                            }
+
+                            imageView.buildDrawingCache();
+                            Bitmap bit = imageView.getDrawingCache();
+                            if(bit != null){
+                                copy = bit.copy(bit.getConfig(), true);
+                            }
+                            bitmapToVideoEncoder.queueFrame(copy);
+                            imageView.invalidate();
 //                            //이전 내역들을 queue 형식으로 저장
 //                            subPaintPosition[0]=subPaintPosition[1];
 //                            subPaintPosition[1]=subPaintPosition[2];
@@ -413,14 +467,9 @@ public class Fragment3 extends Fragment {
 //                            subPaintPosition[6]=subPaintPosition[7];
 //                            subPaintPosition[7]=subPaintPosition[8];
 //                            subPaintPosition[8]=tempPaintposition;
-                            imageView.invalidate();
 
-                            imageView.buildDrawingCache();
-                            Bitmap bit = imageView.getDrawingCache();
-                            if(bit != null){
-                                copy = bit.copy(bit.getConfig(), true);
-                            }
-                            bitmapToVideoEncoder.queueFrame(copy);
+
+
 
                             //saving as png files
 //                            try{
@@ -438,8 +487,15 @@ public class Fragment3 extends Fragment {
                         }
                         bitmapToVideoEncoder.stopEncoding();
                         audioRecord.stop();
-                        recorder.stop();
-                        recorder.release();
+                        stopRecording();
+
+//                        if(recorder != null){
+//                            recorder.stop();
+//                            recorder.reset();
+//                            recorder.release();
+//                            recorder = null;
+//                        }
+
 
                         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                         Uri contentUri = Uri.fromFile(file);
@@ -452,6 +508,23 @@ public class Fragment3 extends Fragment {
             mRecordThread.start();
         }
     }
-
+    private void painting(int x, int y, int r, int hz, int num, Canvas canvas){
+        if(r!=0){
+            int red = getResources().getColor(R.color.red);
+            int orange = getResources().getColor(R.color.orange);
+            int yellow = getResources().getColor(R.color.yellow);
+            int green = getResources().getColor(R.color.green);
+            int blue = getResources().getColor(R.color.blue);
+            int navy = getResources().getColor(R.color.navy);
+            if(hz<=8) paint.setColor(navy);
+            else if(hz<=15) paint.setColor(blue);
+            else if(hz<=30) paint.setColor(green);
+            else if(hz<=60) paint.setColor(yellow);
+            else if(hz<=100) paint.setColor(orange);
+            else paint.setColor(red);
+            //paint.setAlpha((8-num*2)*10);
+            canvas.drawCircle(x, y, r, paint);
+        }
+    }
 }
 
