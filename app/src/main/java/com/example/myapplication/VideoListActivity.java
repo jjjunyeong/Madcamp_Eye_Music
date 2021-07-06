@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -18,6 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class VideoListActivity extends AppCompatActivity {
@@ -26,6 +33,9 @@ public class VideoListActivity extends AppCompatActivity {
     VideoView videoView;
     MediaController media_Controller;
     Button button;
+    MediaPlayer mediaPlayer;
+
+    String type = "video/*";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +53,7 @@ public class VideoListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*,video/*");
+                photoPickerIntent.setType("video/*");
                 startActivityForResult(photoPickerIntent, PICK_VIDEO_REQUEST);
             }
         });
@@ -54,19 +64,37 @@ public class VideoListActivity extends AppCompatActivity {
 
         if (requestCode == PICK_VIDEO_REQUEST ) {
             Uri mVideoURI  = data.getData();
+            String name = getVideoNametoUri(data.getData());
+
+            String filepath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + name;
+            Toast.makeText(this, filepath, Toast.LENGTH_SHORT).show();
+            TextView textView = findViewById(R.id.videoText);
+            textView.setText(filepath);
+
             videoView.setMediaController(media_Controller);
-
             videoView.setVideoURI(mVideoURI);
-
             videoView.requestFocus();
+
+
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    //mediaPlayer.start();
                     videoView.start();
                 }
             });
-
         }
+
+    }
+
+    public String getVideoNametoUri(Uri data){
+        String[] proj = {MediaStore.Video.Media.DATA};
+        Cursor cursor = managedQuery(data, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+        cursor.moveToFirst();
+        String path = cursor.getString(column_index);
+        String name = path.substring(path.lastIndexOf("/")+1);
+        return name;
     }
 
 }
