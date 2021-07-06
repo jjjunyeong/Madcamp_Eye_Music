@@ -156,7 +156,7 @@ public class BitmapToVideoEncoder {
             return;
         }
 
-        Log.d(TAG, "Queueing frame");
+        //Log.d(TAG, "Queueing frame");
         mEncodeQueue.add(bitmap);
 
         synchronized (mFrameSync) {

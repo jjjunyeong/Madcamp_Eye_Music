@@ -143,7 +143,7 @@ public class Fragment3 extends Fragment {
         }else if(resultCode==1){
             musiclistButton.setText("A Song Written Easily");
             musicLoad=true;
-            music=1;
+            music= 1;
         }else if(resultCode==2) {
             musiclistButton.setText("BANANA");
             musicLoad = true;
@@ -153,7 +153,7 @@ public class Fragment3 extends Fragment {
             musicLoad=true;
             music=3;
         }else if(resultCode==4){
-            musiclistButton.setText("butter_BTS");
+            musiclistButton.setText("butter");
             musicLoad=true;
             music=4;
         }else if(resultCode==5){
@@ -165,7 +165,7 @@ public class Fragment3 extends Fragment {
             musicLoad=true;
             music=6;
         }else if(resultCode==7){
-            musiclistButton.setText("Rollin_BraveGirls");
+            musiclistButton.setText("Rollin");
             musicLoad=true;
             music=7;
         }else if(resultCode==8){
@@ -190,7 +190,7 @@ public class Fragment3 extends Fragment {
                 player.seekTo(musicPosition);
                 player.start();
 
-                Toast.makeText(getContext(), "재시작됨.", Toast.LENGTH_SHORT).show();
+   //             Toast.makeText(getContext(), "재시작됨.", Toast.LENGTH_SHORT).show();
             }
             else{
                 closePlayer();
@@ -217,7 +217,7 @@ public class Fragment3 extends Fragment {
                         break;
                 }
                 player.start();
-                Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
+   //             Toast.makeText(getContext(), "재생 시작됨.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -232,7 +232,7 @@ public class Fragment3 extends Fragment {
             musicPosition = player.getCurrentPosition();
             player.pause();
 
-            Toast.makeText(getContext(), "일시정지됨.", Toast.LENGTH_SHORT).show();
+    //        Toast.makeText(getContext(), "일시정지됨.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -251,7 +251,7 @@ public class Fragment3 extends Fragment {
                 playing = false;
                 pauseAudio();
                 playButton.setImageResource(R.drawable.ic_playing);
-                Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
+     //           Toast.makeText(getActivity(), "finish recording", Toast.LENGTH_SHORT).show();
             } else {
                 playing = true;
                 playAudio();
@@ -311,7 +311,7 @@ public class Fragment3 extends Fragment {
 
 
 
-                    Toast.makeText(getContext(), "외부 저장소 사용을 위해 읽기/쓰기 필요", Toast.LENGTH_SHORT).show();
+    //                Toast.makeText(getContext(), "외부 저장소 사용을 위해 읽기/쓰기 필요", Toast.LENGTH_SHORT).show();
                 }
 
                 requestPermissions(new String[]
@@ -326,7 +326,6 @@ public class Fragment3 extends Fragment {
 
 
     private void askRecordButtonPermissions() {
-        checkPermission();
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             //ask for record permission on runtime
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RECORD_PERM_CODE);
@@ -379,9 +378,9 @@ public class Fragment3 extends Fragment {
 //                                bitmapToVideoEncoder.startEncoding(1070, 1600, file);
 //                            }
 //                            fos.close();
-                            }catch(Exception e){
-                                Log.e("testSaveView", "Exception: " + e.toString());
-                            }
+                        }catch(Exception e){
+                            Log.e("testSaveView", "Exception: " + e.toString());
+                        }
 
                         int count = 0;
 
@@ -527,4 +526,3 @@ public class Fragment3 extends Fragment {
         }
     }
 }
-

@@ -9,7 +9,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,9 +37,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -45,7 +51,6 @@ public class Fragment2 extends Fragment {
     GridView gridView;
     FloatingActionButton add_btn;
     FloatingActionButton camera_btn;
-    FloatingActionButton gallery_btn;
     Animation fromBottom, toBottom, rotateOpen, rotateClose;
     Boolean clicked = false;
     Boolean heart_visible = false;
@@ -123,11 +128,9 @@ public class Fragment2 extends Fragment {
 
         add_btn = (FloatingActionButton) rootView.findViewById(R.id.add_btn);
         camera_btn = (FloatingActionButton) rootView.findViewById(R.id.camera_btn);
-        gallery_btn = (FloatingActionButton) rootView.findViewById(R.id.gallery_btn);
 
         add_btn.setOnClickListener(new AddBtnClickListener());
         camera_btn.setOnClickListener(new CameraBtnClickListener());
-        gallery_btn.setOnClickListener(new GalleryBtnClickListener());
 
         return rootView;
     }
@@ -149,23 +152,19 @@ public class Fragment2 extends Fragment {
     private void setVisibility(Boolean clicked, View view){
         if(!clicked){
             camera_btn.setVisibility(view.VISIBLE);
-            gallery_btn.setVisibility(view.VISIBLE);
         }
         else{
             camera_btn.setVisibility(view.INVISIBLE);
-            gallery_btn.setVisibility(view.INVISIBLE);
         }
     }
 
     private void setAnimation(Boolean clicked) {
         if(!clicked){
             camera_btn.startAnimation(fromBottom);
-            gallery_btn.startAnimation(fromBottom);
             add_btn.startAnimation(rotateOpen);
         }
         else{
             camera_btn.startAnimation(toBottom);
-            gallery_btn.startAnimation(toBottom);
             add_btn.startAnimation(rotateClose);
         }
     }
@@ -174,11 +173,15 @@ public class Fragment2 extends Fragment {
         @Override
         public void onClick(View view){
 //            Toast.makeText(getActivity(), "camera clicked", Toast.LENGTH_SHORT).show();
-            askCameraPermissions();
+            try {
+                askCameraPermissions();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void askCameraPermissions() {
+    private void askCameraPermissions() throws IOException {
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             //ask for permission on runtime
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
@@ -191,39 +194,43 @@ public class Fragment2 extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         if(requestCode == CAMERA_PERM_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
+                try {
+                    openCamera();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }else{
-                Toast.makeText(getActivity(), "Camera Permission is Required to Use Camera", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Camera Request Denied", Toast.LENGTH_SHORT).show();
                 //왜 안떠..
             }
         }
     }
 
-    private void openCamera() {
-//        Toast.makeText(getActivity(), "Camera Open Request", Toast.LENGTH_SHORT).show();
+    private void openCamera() throws IOException {
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         startActivityForResult(camera, CAMERA_REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if(requestCode == CAMERA_REQUEST_CODE){
-            Toast.makeText(getActivity(), "Will implement something..", Toast.LENGTH_SHORT).show();
-            //찍은 사진 가져오기
-//            Bitmap image = (Bitmap) data.getExtras().get("data");
-//            Drawable drawable = new BitmapDrawable(image);
-//
-//            Resources r = getResources();
-//            Drawable d = new BitmapDrawable(r, image);
-//            img_numbers.add(drawable);
-//            img_names.add("example");
-        }
-    }
 
-    private class GalleryBtnClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View view){
-            Toast.makeText(getActivity(), "gallery clicked", Toast.LENGTH_SHORT).show();
+            long now = System.currentTimeMillis();
+
+            Date date = new Date(now);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String getTime = sdf.format(date);
+ //           Toast.makeText(getActivity(), getTime, Toast.LENGTH_SHORT).show();
+
+            String photoPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + getTime + ".png";
+            File file = new File(photoPath);
+
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(file);
+            mediaScanIntent.setData(contentUri);
+            getActivity().sendBroadcast(mediaScanIntent);
+
         }
     }
 
