@@ -7,15 +7,41 @@
     tools:context=".SplashActivity">
 
     <TextView
-        android:id="@+id/tv_jj"
+        android:id="@+id/tv_jw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="JongWon X JunYeong"
+        android:text="JongWon"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/spin_kit"
+        app:layout_constraintEnd_toStartOf="@+id/tv_x"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_jy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="JunYeong"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/spin_kit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/tv_x" />
+
+    <TextView
+        android:id="@+id/tv_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="X"
+        android:textColor="@color/red"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/spin_kit"
+        app:layout_constraintEnd_toEndOf="@+id/spin_kit"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="@+id/spin_kit" />
 
     <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/spin_kit"
