@@ -17,6 +17,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="Sample Title"
+            android:fontFamily="@font/esamanru_medium"
             android:textColor="#fff"/>
 
         <ImageButton

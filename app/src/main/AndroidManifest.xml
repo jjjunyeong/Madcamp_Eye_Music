@@ -20,8 +20,10 @@
             android:name=".MusicListActivity"
             android:label="@string/title_activity_music_list"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
-        <activity android:name=".ClickedItemActivity" />
-        <activity android:name=".VideoListActivity" />
+        <activity android:name=".ClickedItemActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar"/>
+        <activity android:name=".VideoListActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar"/>
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"
