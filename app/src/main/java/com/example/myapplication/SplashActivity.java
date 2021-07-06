@@ -30,9 +30,15 @@ public class SplashActivity extends AppCompatActivity {
 
         Animation anim = AnimationUtils.loadAnimation(this,R.anim.alpha);
         anim.reset();
-        TextView l= (TextView) findViewById(R.id.tv_jj);
+        TextView l= (TextView) findViewById(R.id.tv_jw);
         l.clearAnimation();
         l.startAnimation(anim);
+
+        Animation anim1 = AnimationUtils.loadAnimation(this,R.anim.alpha);
+        anim1.reset();
+        TextView l1= (TextView) findViewById(R.id.tv_jy);
+        l1.clearAnimation();
+        l1.startAnimation(anim1);
 
         Thread thread = new Thread(){
             @Override
