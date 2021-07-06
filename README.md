@@ -22,6 +22,9 @@
     사진을 길게 클릭하면 사진의 우측 상단에 하트 표시를 통해 '좋아요'기능을 구현했습니다.
     
     
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/54852021/124608255-8957bd00-dea9-11eb-9eec-cba5e8e5a23e.gif)
+    
+    
     
   3-3: Music Visualizer Tab
     Sample Title 버튼을 클릭하면 내장되어 있는 음악 리스트를 보고 원하는 음악을 선택할 수 있습니다.
