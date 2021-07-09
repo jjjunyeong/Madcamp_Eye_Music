@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="tab_text_1">Calls</string>
-    <string name="tab_text_2">Images</string>
-    <string name="tab_text_3">Etc</string>
+    <string name="app_name">Eye Music</string>
+    <string name="tab_text_1">CALLS</string>
+    <string name="tab_text_2">IMAGES</string>
+    <string name="tab_text_3">MUSIC</string>
     <string name="title_activity_music_list">MusicListActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
