@@ -5,8 +5,6 @@
 
 ||Loading Tab||
   
-![20210706_212617 1](https://user-images.githubusercontent.com/54852021/124602526-e781a180-dea3-11eb-8cb4-d3dfd45fc73f.gif)
-  
   3-1: PhoneBook Tab
     SQLite 폰 내장 데이터베이스를 사용해서 전화번호와 이름을 저장하고 리사이클러뷰에 나타냈습니다.
     아이템을 꾹 눌러 리스트에서 삭제가 가능하며, 우하단 + 버튼을 통해서 연락처 추가가 가능합니다.
